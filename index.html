@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1d4ed8">
-<meta name="description" content="فاکتورساز — صدور آنی فاکتور فروش و پیش‌فاکتور روی A4 با محاسبه خودکار، خروجی PDF و PNG">
-<title>فاکتورساز | صدور فاکتور A4</title>
+<meta name="description" content="فاکتور ساز LIMI — صدور آنی فاکتور فروش و پیش‌فاکتور روی A4 با محاسبه خودکار، خروجی PDF و PNG">
+<title>فاکتور ساز LIMI | صدور آنی فاکتور</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d4ed8'/%3E%3Cpath d='M20 14h24v36l-4-3-4 3-4-3-4 3-4-3-4 3Z' fill='white'/%3E%3Cpath d='M25 24h14M25 31h14M25 38h8' stroke='%231d4ed8' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -49,7 +49,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 button:disabled{cursor:not-allowed}
 input,select,textarea{font-family:inherit;color:var(--ink)}
 :focus-visible{outline:2px solid var(--blue2);outline-offset:2px;border-radius:6px}
-.en{direction:ltr;unicode-bidi:embed;display:inline-block;letter-spacing:.05em;font-weight:700}
+.en{direction:ltr;unicode-bidi:embed;display:inline-block;letter-spacing:.05em;font-weight:800}
 
 /* ---------- Scrollbars ---------- */
 *{scrollbar-width:thin;scrollbar-color:#b7c8e2 transparent}
@@ -149,7 +149,7 @@ input,select,textarea{font-family:inherit;color:var(--ink)}
 .editor>.card:nth-child(2){animation-delay:.04s}.editor>.card:nth-child(3){animation-delay:.08s}
 .editor>.card:nth-child(4){animation-delay:.12s}.editor>.card:nth-child(5){animation-delay:.16s}
 .editor>.card:nth-child(6){animation-delay:.2s}.editor>.card:nth-child(7){animation-delay:.24s}
-.editor>.card:nth-child(8){animation-delay:.28s}
+.editor>.card:nth-child(8){animation-delay:.28s}.editor>.card:nth-child(9){animation-delay:.32s}
 .card-head{display:flex;align-items:center;gap:10px;margin-bottom:15px;flex-wrap:wrap}
 .card-ico{
   width:32px;height:32px;border-radius:9px;background:var(--blue-50);color:var(--blue);
@@ -192,17 +192,7 @@ input,select,textarea{font-family:inherit;color:var(--ink)}
 .flash-inp{animation:flashBorder .7s ease}
 @keyframes flashBorder{0%{box-shadow:0 0 0 4px rgba(37,99,235,.3);border-color:var(--blue2)}100%{box-shadow:none}}
 
-/* ---------- Doc kind selector ---------- */
-.doc-kind-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px}
-.kind-btn{
-  display:flex;align-items:center;justify-content:center;gap:8px;height:42px;
-  border-radius:11px;border:1.5px solid var(--line);background:var(--surface2);
-  font-size:13.5px;font-weight:800;color:var(--muted);transition:all .15s;
-}
-.kind-btn:hover{border-color:var(--blue3);color:var(--ink)}
-.kind-btn.on{border-color:var(--blue2);background:var(--blue-50);color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
-
-/* ---------- Type cards ---------- */
+/* ---------- Type & Kind cards ---------- */
 .type-cards{display:flex;flex-direction:column;gap:9px}
 .type-card{
   display:flex;align-items:center;gap:13px;padding:13px 14px;border-radius:12px;
@@ -212,7 +202,7 @@ input,select,textarea{font-family:inherit;color:var(--ink)}
 .type-card:hover{border-color:var(--blue3);background:#fff}
 .type-card.selected{border-color:var(--blue2);background:var(--blue-50);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
 .type-card input{position:absolute;opacity:0;pointer-events:none}
-.tc-visual{width:44px;height:44px;border-radius:10px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tc-visual{width:44px;height:44px;border-radius:10px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--blue)}
 .tc-page{border:2px solid var(--blue);border-radius:3px;position:relative;background:linear-gradient(180deg,var(--blue-100) 0 26%,#fff 26%)}
 .tc-page::after{content:"";position:absolute;right:3px;left:3px;top:52%;height:2px;background:var(--blue-200);box-shadow:0 5px 0 var(--blue-200)}
 .tc-portrait{width:20px;height:28px}
@@ -275,7 +265,7 @@ input,select,textarea{font-family:inherit;color:var(--ink)}
 .items-hint{margin-top:9px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px solid var(--line2);border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--ink2)}
 
-/* ---------- Switch, VAT & Global Discount ---------- */
+/* ---------- Switch, VAT, Discount & Signature ---------- */
 .vat-row{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:11px;background:var(--surface2);margin-bottom:10px;flex-wrap:wrap}
 .switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;flex:1;min-width:170px}
 .switch input{position:absolute;opacity:0;width:0;height:0}
@@ -302,9 +292,9 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
   background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;
   border-radius:11px;padding:13px 16px;box-shadow:0 6px 18px -6px rgba(30,58,138,.55);
 }
-.sum-grand span{font-size:12.5px;font-weight:700;opacity:.9}
-.sum-grand b{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
-.sum-grand b small{font-size:11.5px;font-weight:600;opacity:.85;margin-inline-start:4px}
+.sum-grand span{font-size:13px;font-weight:700;opacity:.92}
+.sum-grand b{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+.sum-grand b small{font-size:12px;font-weight:600;opacity:.88;margin-inline-start:4px}
 .sum-grand.flash{animation:grandFlash .55s ease}
 @keyframes grandFlash{0%{box-shadow:0 0 0 5px rgba(37,99,235,.35)}100%{box-shadow:0 6px 18px -6px rgba(30,58,138,.55)}}
 
@@ -334,14 +324,10 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
 .chip-warn{
   display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--warn);
   background:var(--warn-50);border:1px solid #fde68a;padding:4px 10px;border-radius:99px;
+  margin-inline-start:auto;
 }
-.zoom{margin-inline-start:auto;display:flex;align-items:center;gap:3px;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:3px}
-.zoom .iconbtn{width:28px;height:28px}
-.zoom-val{font-size:11.5px;font-weight:800;color:var(--ink2);min-width:44px;text-align:center;font-variant-numeric:tabular-nums}
-.zoom .fit-btn{width:auto;padding:0 9px;gap:5px;font-size:11px;font-weight:700;display:inline-flex;align-items:center}
-.zoom .fit-btn.on{background:var(--blue-50);color:var(--blue)}
 .scroller{
-  flex:1;min-height:0;overflow:auto;padding:24px;scrollbar-gutter:stable;
+  flex:1;min-height:0;overflow:auto;padding:22px;scrollbar-gutter:stable;
   background:
     radial-gradient(rgba(30,58,138,.10) 1px, transparent 1px) 0 0/22px 22px,
     linear-gradient(180deg,#e9f0f9,#e2ebf6);
@@ -362,55 +348,66 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
 .sheet .num{text-align:center;font-variant-numeric:tabular-nums}
 .tbl{width:100%;border-collapse:collapse;table-layout:fixed}
 .tbl th{
-  background:#1f2937;color:#ffffff;border:1px solid #111827;font-weight:700;
+  background:#e5e7eb;color:#111827;border:1px solid #4b5563;font-weight:800;
   line-height:1.4;vertical-align:middle;
 }
-.tbl td{border:1px solid #9ca3af;vertical-align:middle;word-wrap:break-word;color:#111827}
+.tbl td{border:1px solid #6b7280;vertical-align:middle;word-wrap:break-word;color:#111827}
 .tbl tbody tr:nth-child(even) td{background:#f9fafb}
-.tbl tfoot td{background:#f3f4f6;font-weight:800;color:#000000;border:1px solid #4b5563;border-top:2px solid #111827}
+.tbl tfoot td{background:#f3f4f6;font-weight:800;color:#000000;border:1px solid #4b5563;border-top:1.5px solid #111827}
 .tbl .desc-cell{text-align:right}
 .tbl .strong{font-weight:800;color:#000000}
 .tbl .minus{color:#111827}
 .tbl .dim{color:#6b7280}
 .tbl-fit{min-height:0;overflow:hidden;position:relative}
 .tbl-fit-in{transform-origin:top right}
-.empty-row td{text-align:center;color:#9ca3af;height:90px;font-size:12px}
+.empty-row td{text-align:center;color:#9ca3af;height:68px;font-size:12px}
 
 .sign-box{
-  border:1px solid #4b5563;border-radius:4px;color:#1f2937;font-weight:700;
+  border:1px solid #4b5563;border-radius:4px;color:#111827;font-weight:700;
   text-align:center;padding-top:8px;background:#ffffff;
 }
 .notes-label{font-size:10.5px;font-weight:800;color:#111827;display:block;margin-bottom:3px}
 .notes-text{color:#1f2937;line-height:1.85;white-space:pre-wrap;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical}
-.totals-box{border:1px solid #4b5563;border-radius:4px;overflow:hidden;background:#ffffff}
-.t-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 11px;border-bottom:1px solid #d1d5db}
+.totals-box{border:1.5px solid #1f2937;border-radius:4px;overflow:hidden;background:#ffffff}
+.t-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:6px 12px;border-bottom:1px solid #d1d5db}
 .t-row span{color:#374151;font-weight:600}
 .t-row b{font-weight:700;font-variant-numeric:tabular-nums;color:#111827}
+
+/* Highlighted Grand Total Box */
 .t-grand{
-  display:flex;align-items:center;justify-content:space-between;gap:14px;
-  background:#1f2937;color:#ffffff;padding:9px 12px;border-top:1.5px solid #111827;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  background:#e5e7eb;color:#000000;padding:11px 14px;border-top:2px solid #111827;
 }
-.t-grand-left{display:flex;flex-direction:column;gap:2px;min-width:0}
-.t-grand-left span{font-weight:700}
-.t-grand-words{font-size:10.5px;font-weight:500;opacity:.92;line-height:1.5}
-.t-grand-num{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;flex-shrink:0}
-.t-grand-num small{font-weight:600;opacity:.9;margin-inline-start:3px}
+.t-grand.only-row{border-top:none}
+.t-grand-left{display:flex;flex-direction:column;gap:3px;min-width:0}
+.t-grand-title{font-size:13.5px;font-weight:900;color:#000000;letter-spacing:-0.01em}
+.t-grand-words{font-size:11px;font-weight:700;color:#1f2937;line-height:1.5}
+.t-grand-num{font-size:18px;font-weight:900;color:#000000;font-variant-numeric:tabular-nums;white-space:nowrap;flex-shrink:0}
+.t-grand-num small{font-size:12px;font-weight:800;color:#111827;margin-inline-start:4px}
 
 /* ----- Simple / portrait (B&W Formal) ----- */
 .s-simple{padding:36px 40px 28px;font-size:13px}
 .ss-frame{border:1.5px solid #1f2937;padding:22px 24px;display:flex;flex-direction:column}
-.ss-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:12px;border-bottom:2px solid #1f2937}
+.ss-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding-bottom:12px;border-bottom:1.5px solid #1f2937}
 .ss-title{font-size:22px;font-weight:900;color:#111827;line-height:1.25}
-.ss-meta{display:flex;flex-direction:column;gap:5px;min-width:190px;border:1px solid #9ca3af;border-radius:4px;padding:7px 11px;background:#f9fafb}
+.ss-valid-note{font-size:11px;font-weight:600;color:#374151;margin-top:4px}
+.ss-meta{display:flex;flex-direction:column;gap:4px;min-width:190px;padding:2px 0}
 .meta-row{display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:11.5px}
 .meta-row span{color:#4b5563;font-weight:600}
 .meta-row b{color:#111827;font-weight:800;font-variant-numeric:tabular-nums}
-.ss-parties{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:13px 0}
-.party{border:1px solid #9ca3af;border-radius:4px;padding:10px 12px;background:#ffffff;min-width:0}
-.p-role{font-size:10.5px;font-weight:800;color:#374151;display:block;border-bottom:1px solid #e5e7eb;padding-bottom:4px;margin-bottom:5px}
-.p-name{font-size:14px;font-weight:800;color:#111827;display:block;margin-bottom:4px;min-height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.p-tel{font-size:11.5px;color:#374151;display:block;min-height:18px}
-.p-tel bdi{font-weight:700;color:#111827;font-variant-numeric:tabular-nums}
+
+.ss-buyer-line{
+  display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+  margin:12px 0 14px;padding:9px 12px;border:1px solid #9ca3af;border-radius:4px;background:#f9fafb;
+  font-size:12.5px;
+}
+.ss-buyer-right{display:flex;align-items:baseline;gap:8px;flex:1;min-width:0}
+.ss-buyer-left{display:flex;align-items:baseline;gap:8px;flex-shrink:0;min-width:195px}
+.ss-buyer-line span{font-weight:700;color:#374151;flex-shrink:0}
+.ss-buyer-line b{font-weight:800;color:#111827}
+.ss-blank-name{display:inline-block;min-width:180px;height:14px}
+.ss-blank-tel{display:inline-block;min-width:110px;height:14px}
+
 .s-simple .tbl th{font-size:12px;padding:8px 8px}
 .s-simple .tbl td{font-size:12.5px;padding:8px 9px;line-height:1.6}
 .s-simple .tbl .desc-cell{font-size:13px}
@@ -420,65 +417,65 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
 .ss-summary-row{display:flex;gap:12px;align-items:stretch}
 .ss-notes{flex:1;min-width:0;border:1px solid #9ca3af;border-radius:4px;padding:9px 11px;background:#f9fafb}
 .ss-notes .notes-text{font-size:11px;-webkit-line-clamp:4}
-.ss-totals{width:340px;flex-shrink:0;font-size:12px}
+.ss-totals{width:360px;flex-shrink:0;font-size:12px}
 .ss-totals.full-w{width:100%}
-.ss-totals .t-grand{font-size:12.5px;padding:10px 12px}
-.ss-totals .t-grand-num{font-size:16px}
 .ss-signs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .ss-signs .sign-box{height:82px;font-size:11px}
 
-/* ----- Official / landscape (Standard Iranian Tax Invoice Style - B&W) ----- */
-.s-official{padding:14px 16px;font-size:10.5px}
-.oframe{border:2px solid #111827;padding:2px}
-.oframe-in{border:1px solid #374151;padding:11px 14px;display:flex;flex-direction:column;gap:7px}
+/* ----- Official / landscape (Standard Iranian Tax Invoice Style — Content-Fitted) ----- */
+.s-official{padding:22px 26px;font-size:11px}
+.oframe{border:2px solid #111827;padding:2px;display:flex;flex-direction:column}
+.oframe-in{border:1px solid #374151;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 
 .of-top-bar{
   display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
-  border-bottom:1.5px solid #111827;padding-bottom:6px;gap:10px;
+  border-bottom:1.5px solid #111827;padding-bottom:8px;gap:10px;
 }
-.of-title{font-size:16px;font-weight:900;color:#000000;text-align:center;letter-spacing:-0.01em}
-.of-subtitle{font-size:10px;color:#374151;text-align:center;font-weight:600;margin-top:1px}
+.of-title{font-size:17px;font-weight:900;color:#000000;text-align:center;letter-spacing:-0.01em}
+.of-subtitle{font-size:10.5px;color:#374151;text-align:center;font-weight:600;margin-top:3px}
 .of-meta-box{
   justify-self:end;border:1px solid #4b5563;background:#f9fafb;
-  padding:4px 9px;display:grid;grid-template-columns:auto auto;gap:2px 14px;font-size:10px;
+  padding:5px 10px;display:grid;grid-template-columns:auto auto;gap:3px 16px;font-size:10.5px;
 }
 .of-meta-box div{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .of-meta-box span{color:#4b5563;font-weight:600}
 .of-meta-box b{color:#000000;font-weight:800;font-variant-numeric:tabular-nums}
 
-.of-parties{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.of-parties{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .of-party{border:1px solid #4b5563;background:#ffffff;display:flex;flex-direction:column}
 .ofp-title{
-  background:#e5e7eb;color:#000000;font-size:10.5px;font-weight:800;
-  padding:3.5px 8px;border-bottom:1px solid #4b5563;text-align:center;
+  background:#e5e7eb;color:#000000;font-size:11px;font-weight:800;
+  padding:4px 8px;border-bottom:1px solid #4b5563;text-align:center;
 }
 .ofp-grid{
-  padding:4px 8px;display:grid;grid-template-columns:1.25fr 1fr;gap:2px 12px;font-size:10px;line-height:1.55;
+  padding:5px 9px;display:grid;grid-template-columns:1.25fr 1fr;gap:3px 12px;font-size:10.5px;line-height:1.6;
 }
-.ofp-item{display:flex;align-items:baseline;gap:5px;min-width:0;min-height:16px}
+.ofp-item{display:flex;align-items:baseline;gap:5px;min-width:0;min-height:17px}
 .ofp-item.full{grid-column:span 2}
 .ofp-item span{color:#4b5563;font-weight:600;flex-shrink:0}
 .ofp-item b{font-weight:700;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ofp-item.name-item b{font-size:11px;font-weight:800;color:#000000}
+.ofp-item.name-item b{font-size:11.5px;font-weight:800;color:#000000}
 
-.s-official .tbl th{font-size:9.5px;padding:5px 3px;background:#e5e7eb;color:#000000;border:1px solid #4b5563}
-.s-official .tbl td{font-size:10.2px;padding:4.5px 4px;line-height:1.45;border:1px solid #6b7280}
-.s-official .tbl .desc-cell{font-size:10.5px;padding:4.5px 7px}
-.s-official .tbl tfoot td{padding:5px 4px;font-size:10.2px;background:#f3f4f6;color:#000000;border:1px solid #4b5563;border-top:1.5px solid #111827}
+.s-official .tbl th{font-size:10px;padding:6px 3px}
+.s-official .tbl td{font-size:10.5px;padding:6px 4px;line-height:1.5}
+.s-official .tbl .desc-cell{font-size:11px;padding:6px 7px}
+.s-official .tbl tfoot td{padding:6px 4px;font-size:10.5px}
 
-.of-after{display:flex;flex-direction:column;gap:7px}
-.of-summary-row{display:flex;gap:8px;align-items:stretch}
-.of-notes{flex:1;min-width:0;border:1px solid #6b7280;padding:6px 10px;background:#ffffff}
-.of-notes .notes-text{font-size:10px;-webkit-line-clamp:4}
-.of-totals{width:430px;flex-shrink:0;font-size:10.3px;border-radius:0}
+.of-after{display:flex;flex-direction:column;gap:10px}
+.of-summary-row{display:flex;gap:12px;align-items:stretch}
+.of-notes{flex:1;min-width:0;border:1px solid #6b7280;border-radius:4px;padding:8px 11px;background:#f9fafb}
+.of-notes .notes-text{font-size:10.5px;-webkit-line-clamp:4;line-height:1.75}
+.of-totals{width:410px;flex-shrink:0;font-size:11px}
 .of-totals.full-w{width:100%}
-.of-totals .t-row{padding:4px 10px}
-.of-totals .t-grand{padding:6.5px 10px;font-size:11px;background:#e5e7eb;color:#000000;border-top:1.5px solid #111827}
-.of-totals .t-grand-words{color:#1f2937;font-size:10px}
-.of-totals .t-grand-num{font-size:13.5px}
+.of-totals .t-row{padding:5px 12px}
+.of-totals .t-grand{padding:10px 14px}
+.of-totals .t-grand-title{font-size:13px}
+.of-totals .t-grand-words{font-size:10.5px}
+.of-totals .t-grand-num{font-size:17px}
+.of-totals .t-grand-num small{font-size:11.5px}
 
-.of-signs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.of-signs .sign-box{height:62px;font-size:10.5px;border-radius:0;border:1px solid #4b5563}
+.of-signs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.of-signs .sign-box{height:68px;font-size:11px;border-radius:4px;border:1px solid #4b5563}
 
 /* ---------- Bottom bar (mobile) ---------- */
 .bottombar{
@@ -490,9 +487,10 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
 }
 .bottombar.kb-hide{transform:translateY(110%)}
 .bar-amount{flex:1;min-width:0}
-.bar-amount span{display:block;font-size:10.5px;font-weight:700;color:var(--muted)}
-.bar-amount b{display:block;font-size:18px;font-weight:900;color:var(--deep);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}
-.bar-amount b small{font-size:11px;font-weight:700;color:var(--muted)}
+.bar-amount span{display:block;font-size:10.5px;font-weight:700;color:var(--muted);margin-bottom:1px}
+.bar-amount-line{display:flex;align-items:baseline;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-amount-line b{font-size:21px;font-weight:900;color:var(--deep);font-variant-numeric:tabular-nums;line-height:1.2}
+.bar-amount-line small{font-size:12.5px;font-weight:800;color:var(--blue)}
 .bar-png{width:42px;height:42px;padding:0;flex-shrink:0;border-radius:10px}
 .bar-pdf{flex:0 0 auto;height:42px;padding:0 13px;font-size:12.5px;border-radius:10px}
 
@@ -584,7 +582,6 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
   .toolbar{padding:8px 10px;gap:6px}
   .live span{display:none}
   .badge.dim{display:none}
-  .zoom{margin-inline-start:auto}
   .head-extra{width:100%;margin-inline-start:42px;justify-content:flex-start}
 }
 @media (prefers-reduced-motion:reduce){
@@ -607,8 +604,8 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
       <path d="M25 23h14M25 30h14M25 37h8" stroke="#1d4ed8" stroke-width="3" stroke-linecap="round"/>
     </svg>
     <div class="brand-text">
-      <h1>فاکتورساز</h1>
-      <p>صدور آنی فاکتور روی <span class="en">A4</span></p>
+      <h1>فاکتور ساز <span class="en">LIMI</span></h1>
+      <p>صدور آنی فاکتور</p>
     </div>
   </div>
   <div class="header-actions">
@@ -643,24 +640,49 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
   <section class="editor" id="paneEdit" aria-label="ویرایش فاکتور">
 
     <div class="chips" id="chips">
-      <button type="button" class="chip" data-action="chip" data-target="#card-type">نوع فاکتور</button>
+      <button type="button" class="chip" data-action="chip" data-target="#card-dockind">نوع سند</button>
+      <button type="button" class="chip" data-action="chip" data-target="#card-type">قالب فاکتور</button>
       <button type="button" class="chip" data-action="chip" data-target="#card-meta">اطلاعات فاکتور</button>
-      <button type="button" class="chip" data-action="chip" data-target="#card-seller">فروشنده</button>
+      <button type="button" class="chip only-official" data-action="chip" data-target="#card-seller">فروشنده</button>
       <button type="button" class="chip" data-action="chip" data-target="#card-buyer">خریدار</button>
       <button type="button" class="chip" data-action="chip" data-target="#card-items">اقلام</button>
       <button type="button" class="chip" data-action="chip" data-target="#card-sums">مالیات و جمع</button>
       <button type="button" class="chip" data-action="chip" data-target="#card-notes">توضیحات</button>
     </div>
 
-    <!-- نوع فاکتور -->
-    <div class="card" id="card-type">
+    <!-- باکس ۱: انتخاب نوع سند (فاکتور فروش / پیش‌فاکتور) -->
+    <div class="card" id="card-dockind">
       <div class="card-head">
         <span class="card-ico"><span class="ic" data-ico="file"></span></span>
-        <span class="card-title">نوع سند و قالب فاکتور</span>
+        <span class="card-title">انتخاب نوع سند</span>
       </div>
-      <div class="doc-kind-grid" role="group" aria-label="عنوان سند">
-        <button type="button" class="kind-btn" data-action="dockind" data-val="sale" aria-pressed="true">۱. فاکتور فروش</button>
-        <button type="button" class="kind-btn" data-action="dockind" data-val="proforma" aria-pressed="false">۲. پیش‌فاکتور</button>
+      <div class="type-cards" role="radiogroup" aria-label="نوع سند">
+        <label class="type-card" id="dkSale">
+          <input type="radio" name="dockind" value="sale" data-bind="docKind" id="dk-sale">
+          <span class="tc-visual"><span class="ic" data-ico="check" data-s="20"></span></span>
+          <span class="tc-body">
+            <b>فاکتور فروش</b>
+            <span>سند قطعی فروش کالا و خدمات به خریدار</span>
+          </span>
+          <span class="tc-radio"></span>
+        </label>
+        <label class="type-card" id="dkProforma">
+          <input type="radio" name="dockind" value="proforma" data-bind="docKind" id="dk-proforma">
+          <span class="tc-visual"><span class="ic" data-ico="file" data-s="20"></span></span>
+          <span class="tc-body">
+            <b>پیش‌فاکتور</b>
+            <span>استعلام قیمت و اعلام شرایط فروش با تاریخ مهلت اعتبار</span>
+          </span>
+          <span class="tc-radio"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- باکس ۲: انتخاب قالب فاکتور (عمودی / افقی) -->
+    <div class="card" id="card-type">
+      <div class="card-head">
+        <span class="card-ico"><span class="ic" data-ico="box"></span></span>
+        <span class="card-title">قالب نمایش و چاپ</span>
       </div>
       <div class="type-cards" role="radiogroup" aria-label="نوع قالب فاکتور">
         <label class="type-card" id="tcSimple">
@@ -668,7 +690,7 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
           <span class="tc-visual"><span class="tc-page tc-portrait"></span></span>
           <span class="tc-body">
             <b>فاکتور عمودی — ساده</b>
-            <span>A4 عمودی؛ اطلاعات مختصر خریدار و فروشنده، مناسب فروش سریع</span>
+            <span>A4 عمودی؛ اطلاعات مختصر خریدار، مناسب فروش سریع</span>
           </span>
           <span class="tc-radio"></span>
         </label>
@@ -677,7 +699,7 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
           <span class="tc-visual"><span class="tc-page tc-landscape"></span></span>
           <span class="tc-body">
             <b>فاکتور افقی — رسمی</b>
-            <span>A4 افقی؛ صورتحساب رسمی با مشخصات کامل طرفین، کد اقتصادی، مالیات و امضا</span>
+            <span>A4 افقی؛ صورتحساب رسمی با مشخصات کامل طرفین، کد اقتصادی و مالیات</span>
           </span>
           <span class="tc-radio"></span>
         </label>
@@ -706,6 +728,14 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
             <select class="sel" id="f-yy" data-bind="meta.date.y" data-int aria-label="سال"></select>
           </div>
         </div>
+        <div class="field span3 only-proforma" id="dueDateField" hidden>
+          <label class="lbl" for="f-due-mm">تاریخ مهلت اعتبار پیش‌فاکتور <small>(شمسی)</small></label>
+          <div class="date-grid">
+            <select class="sel" id="f-due-dd" data-bind="meta.dueDate.d" data-int aria-label="روز مهلت"></select>
+            <select class="sel" id="f-due-mm" data-bind="meta.dueDate.m" data-int aria-label="ماه مهلت"></select>
+            <select class="sel" id="f-due-yy" data-bind="meta.dueDate.y" data-int aria-label="سال مهلت"></select>
+          </div>
+        </div>
         <div class="field only-official">
           <label class="lbl" for="f-serial">شماره سریال</label>
           <input class="inp ltr" id="f-serial" data-bind="meta.serial" data-digits maxlength="6" inputmode="numeric" autocomplete="off" placeholder="246810">
@@ -720,8 +750,8 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
       </div>
     </div>
 
-    <!-- فروشنده -->
-    <div class="card" id="card-seller">
+    <!-- فروشنده (فقط برای فاکتور افقی رسمی) -->
+    <div class="card only-official" id="card-seller">
       <div class="card-head">
         <span class="card-ico"><span class="ic" data-ico="store"></span></span>
         <span class="card-title">اطلاعات فروشنده</span>
@@ -735,23 +765,23 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
           <label class="lbl" for="s-phone">تلفن</label>
           <input class="inp ltr" id="s-phone" data-bind="seller.phone" data-phone inputmode="tel" autocomplete="off" placeholder="021-88776655">
         </div>
-        <div class="field only-official">
+        <div class="field">
           <label class="lbl" for="s-econ">کد اقتصادی / شناسه ملی</label>
           <input class="inp ltr" id="s-econ" data-bind="seller.econ" data-digits maxlength="12" inputmode="numeric" autocomplete="off" placeholder="14003345678">
         </div>
-        <div class="field only-official">
+        <div class="field">
           <label class="lbl" for="s-reg">شماره ثبت</label>
           <input class="inp ltr" id="s-reg" data-bind="seller.reg" data-digits maxlength="8" inputmode="numeric" autocomplete="off" placeholder="548761">
         </div>
-        <div class="field only-official">
+        <div class="field">
           <label class="lbl" for="s-postal">کد پستی</label>
           <input class="inp ltr" id="s-postal" data-bind="seller.postal" data-digits maxlength="10" inputmode="numeric" autocomplete="off" placeholder="1587634521">
         </div>
-        <div class="field only-official">
+        <div class="field">
           <label class="lbl" for="s-city">استان / شهر</label>
           <input class="inp" id="s-city" data-bind="seller.city" autocomplete="off" placeholder="تهران / تهران">
         </div>
-        <div class="field f-address only-official">
+        <div class="field f-address">
           <label class="lbl" for="s-address">نشانی</label>
           <input class="inp" id="s-address" data-bind="seller.address" autocomplete="off" placeholder="تهران، خیابان ولیعصر، کوچه نگار، پلاک ۱۲">
         </div>
@@ -821,11 +851,11 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
       </div>
     </div>
 
-    <!-- مالیات و جمع -->
+    <!-- مالیات، تخفیف، امضا و جمع -->
     <div class="card" id="card-sums">
       <div class="card-head">
         <span class="card-ico"><span class="ic" data-ico="percent"></span></span>
-        <span class="card-title">تخفیف، مالیات و جمع‌بندی</span>
+        <span class="card-title">تخفیف، مالیات و تنظیمات پایانی</span>
       </div>
 
       <div class="vat-row">
@@ -856,6 +886,17 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
           <input class="inp" id="f-rate" data-bind="vat.rate" data-int min="0" max="100" inputmode="numeric" aria-label="نرخ مالیات (درصد)">
           <span>٪</span>
         </div>
+      </div>
+
+      <div class="vat-row">
+        <label class="switch">
+          <input type="checkbox" id="f-sign-en" data-bind="showSignatures">
+          <span class="sw-track"></span>
+          <span class="sw-text">
+            <b>کادر مهر و امضای طرفین</b>
+            <span>نمایش محل مهر و امضا در پایین فاکتور</span>
+          </span>
+        </label>
       </div>
 
       <div class="sum-table">
@@ -896,19 +937,11 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
       <span class="badge" id="typeBadge">عمودی · ساده</span>
       <span class="badge dim" id="dimBadge"><span class="en">A4</span> · ۲۱۰×۲۹۷ میلی‌متر</span>
       <span class="chip-warn" id="warnChip" hidden><span class="ic" data-ico="alert" data-s="13"></span><span id="warnText"></span></span>
-      <div class="zoom">
-        <button type="button" class="iconbtn fit-btn on" id="zoomFit" data-action="zoom-fit" title="اندازه متناسب با صفحه">
-          <span class="ic" data-ico="fit" data-s="14"></span>متناسب
-        </button>
-        <button type="button" class="iconbtn" data-action="zoom-out" title="کوچک‌نمایی" aria-label="کوچک‌نمایی"><span class="ic" data-ico="zout" data-s="15"></span></button>
-        <span class="zoom-val" id="zoomVal">۱۰۰٪</span>
-        <button type="button" class="iconbtn" data-action="zoom-in" title="بزرگ‌نمایی" aria-label="بزرگ‌نمایی"><span class="ic" data-ico="zin" data-s="15"></span></button>
-      </div>
     </div>
     <div class="scroller" id="scroller">
       <div class="sheet-wrap" id="sheetWrap">
         <div class="sheet-shadow"></div>
-        <div class="sheet s-simple" id="sheet" title="دوبار کلیک: بزرگ‌نمایی"></div>
+        <div class="sheet s-simple" id="sheet"></div>
       </div>
     </div>
   </section>
@@ -918,7 +951,10 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
 <div class="bottombar" id="bottombar">
   <div class="bar-amount">
     <span>مبلغ قابل پرداخت</span>
-    <b><span id="barGrand">۰</span> <small data-cur>ریال</small></b>
+    <div class="bar-amount-line">
+      <b id="barGrand">۰</b>
+      <small data-cur>ریال</small>
+    </div>
   </div>
   <button type="button" class="btn btn-outline bar-png" data-action="export-png" data-export="png" aria-label="خروجی PNG" title="خروجی PNG">
     <span class="ic" data-ico="image"></span>
@@ -943,12 +979,12 @@ kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px 
   </div>
 </div>
 
-<noscript><div style="padding:100px 20px;text-align:center;font-family:Tahoma">برای استفاده از فاکتورساز، جاوااسکریپت مرورگر را فعال کنید.</div></noscript>
+<noscript><div style="padding:100px 20px;text-align:center;font-family:Tahoma">برای استفاده از فاکتورساز LIMI، جاوااسکریپت مرورگر را فعال کنید.</div></noscript>
 
 <script>
 'use strict';
 /* ================================================================
-   فاکتورساز — Single-file invoice builder (A4 · PDF/PNG · Vazirmatn)
+   فاکتور ساز LIMI — Single-file invoice builder (A4 · PDF/PNG · Vazirmatn)
    ================================================================ */
 
 /* ---------- Helpers ---------- */
@@ -998,9 +1034,6 @@ const ICO = {
   percent:'<path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',
   note:'<path d="M15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10l6-6V5a2 2 0 0 0-2-2Z"/><path d="M15 21v-6h6"/>',
   hash:'<path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/>',
-  zin:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/>',
-  zout:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3M8 11h6"/>',
-  fit:'<path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M16 21h3a2 2 0 0 0 2-2v-3M8 21H5a2 2 0 0 1-2-2v-3"/>',
   info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>'
 };
 const icon = (n, s=18) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[n]||''}</svg>`;
@@ -1010,7 +1043,7 @@ const A4P = { w: 794, h: 1123 };            // A4 portrait  @96dpi
 const A4L = { w: 1123, h: 794 };            // A4 landscape @96dpi
 const UNITS = ['عدد','بسته','جعبه','دستگاه','کیلوگرم','گرم','متر','لیتر','ساعت','سرویس'];
 const MONTHS = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
-const KEY = 'factoraaz.v3';
+const KEY = 'factoraaz.limi.v6';
 
 /* ---------- Jalali date ---------- */
 function jToday(){
@@ -1021,7 +1054,7 @@ function jToday(){
   }catch(e){ return { y: 1405, m: 9, d: 3 }; }
 }
 const daysInMonth = m => (m <= 6 ? 31 : 30);
-const dateStr = meta => `${faDigits(meta.date.y)}/${faDigits(pad2(meta.date.m))}/${faDigits(pad2(meta.date.d))}`;
+const dateStr = d => `${faDigits(d.y)}/${faDigits(pad2(d.m))}/${faDigits(pad2(d.d))}`;
 
 /* ---------- Persian number-to-words ---------- */
 const W_YEK  = ['','یک','دو','سه','چهار','پنج','شش','هفت','هشت','نه'];
@@ -1062,23 +1095,27 @@ const emptyParty = () => ({ name:'', phone:'', econ:'', reg:'', postal:'', city:
 const blankItem  = () => ({ id: uid(), code:'', desc:'', unit:'عدد', qty:'1', price:'', discount:'' });
 function freshState(prev){
   const nextNum = prev && prev.meta.number ? String((parseInt(toEn(prev.meta.number), 10) || 1000) + 1) : '';
+  const today = jToday();
   return {
     docKind: prev ? prev.docKind : 'sale',
     type: prev ? prev.type : 'simple',
     currency: prev ? prev.currency : 'rial',
     vat: prev ? { ...prev.vat } : { enabled: false, rate: 10 },
     globalDiscount: prev ? { ...prev.globalDiscount } : { enabled: false, rate: 5 },
-    meta: { number: nextNum, serial:'', date: jToday(), payment:'نقدی' },
+    showSignatures: prev ? !!prev.showSignatures : false,
+    meta: { number: nextNum, serial:'', date: { ...today }, dueDate: { ...today }, payment:'نقدی' },
     seller: emptyParty(), buyer: emptyParty(),
     items: [blankItem()], notes:'',
-    tab:'edit', zoom:null
+    tab:'edit'
   };
 }
 function seedState(prev){
   const s = freshState(prev);
+  const today = jToday();
   s.vat = { enabled: true, rate: 10 };
   s.globalDiscount = { enabled: true, rate: 5 };
-  s.meta = { number:'1041', serial:'246810', date: jToday(), payment:'غیرنقدی' };
+  s.showSignatures = true;
+  s.meta = { number:'1041', serial:'246810', date: { ...today }, dueDate: { ...today }, payment:'غیرنقدی' };
   s.seller = { name:'شرکت تجارت آوان پارس', phone:'021-88776655', econ:'14003345678', reg:'548761', postal:'1587634521', city:'تهران / تهران', address:'تهران، خیابان ولیعصر، بالاتر از میدان ونک، کوچه نگار، پلاک ۱۲، واحد ۴' };
   s.buyer  = { name:'فروشگاه لوازم اداری البرز', phone:'026-34455667', econ:'14005567890', reg:'', postal:'3154887612', city:'البرز / کرج', address:'کرج، خیابان طالقانی، نبش کوچه مهر، پلاک ۸۶' };
   s.items = [
@@ -1106,11 +1143,17 @@ function loadState(){
       currency: o.currency === 'toman' ? 'toman' : 'rial',
       vat: { ...base.vat, ...(o.vat || {}) },
       globalDiscount: { ...base.globalDiscount, ...(typeof o.globalDiscount === 'object' ? o.globalDiscount : {}) },
-      meta: { ...base.meta, ...(o.meta || {}), date: { ...base.meta.date, ...((o.meta || {}).date || {}) } },
+      showSignatures: !!o.showSignatures,
+      meta: {
+        ...base.meta,
+        ...(o.meta || {}),
+        date: { ...base.meta.date, ...((o.meta || {}).date || {}) },
+        dueDate: { ...base.meta.dueDate, ...((o.meta || {}).dueDate || {}) }
+      },
       seller: { ...emptyParty(), ...o.seller },
       buyer:  { ...emptyParty(), ...o.buyer },
       items: o.items.map(it => ({ ...blankItem(), ...it, id: it.id || uid() })),
-      tab:'edit', zoom:null
+      tab:'edit'
     };
   }catch(e){ return null; }
 }
@@ -1154,18 +1197,14 @@ const curWord = () => (state.currency === 'rial' ? 'ریال' : 'تومان');
 /* ================================================================
    SHEET BUILDERS (Formal B&W)
    ================================================================ */
-function partySimple(party, role){
-  const tel = String(party.phone || '').trim();
-  return `<div class="party">
-    <span class="p-role">مشخصات ${role}</span>
-    <b class="p-name">${txt(party.name)}</b>
-    <span class="p-tel">تلفن تماس: ${tel ? `<bdi dir="ltr">${faDigits(esc(tel))}</bdi>` : ''}</span>
-  </div>`;
-}
 function buildSimple(t){
   const cur = curWord();
-  const docTitle = state.docKind === 'proforma' ? 'پیش‌فاکتور فروش' : 'فاکتور فروش';
-  const numLabel = state.docKind === 'proforma' ? 'شماره پیش‌فاکتور:' : 'شماره فاکتور:';
+  const isProforma = state.docKind === 'proforma';
+  const docTitle = isProforma ? 'پیش‌فاکتور فروش' : 'فاکتور فروش';
+  const numLabel = isProforma ? 'شماره پیش‌فاکتور:' : 'شماره فاکتور:';
+
+  const bName = String(state.buyer.name || '').trim();
+  const bTel  = String(state.buyer.phone || '').trim();
 
   const body = t.rows.length ? t.rows.map((r, i) => `<tr>
       <td class="num">${faDigits(i + 1)}</td>
@@ -1184,22 +1223,39 @@ function buildSimple(t){
     </div>` : '';
 
   const hasDiscount = t.gDiscOn && t.gDiscPct > 0;
+  const hasExtraRows = hasDiscount || t.vatOn;
+
+  const signsBlock = state.showSignatures ? `
+    <div class="ss-signs">
+      <div class="sign-box">مهر و امضای فروشنده</div>
+      <div class="sign-box">مهر و امضای خریدار</div>
+    </div>` : '';
 
   return `
   <div class="ss-frame">
     <div class="ss-head">
       <div>
         <div class="ss-title">${docTitle}</div>
+        ${isProforma ? `<div class="ss-valid-note">این پیش‌فاکتور تا تاریخ <b>${dateStr(state.meta.dueDate)}</b> اعتبار دارد.</div>` : ''}
       </div>
       <div class="ss-meta">
         <div class="meta-row"><span>${numLabel}</span><b>${state.meta.number ? faDigits(esc(state.meta.number)) : ''}</b></div>
-        <div class="meta-row"><span>تاریخ صدور:</span><b>${dateStr(state.meta)}</b></div>
+        <div class="meta-row"><span>تاریخ صدور:</span><b>${dateStr(state.meta.date)}</b></div>
+        ${isProforma ? `<div class="meta-row"><span>تاریخ مهلت:</span><b>${dateStr(state.meta.dueDate)}</b></div>` : ''}
       </div>
     </div>
-    <div class="ss-parties">
-      ${partySimple(state.seller, 'فروشنده')}
-      ${partySimple(state.buyer, 'خریدار')}
+
+    <div class="ss-buyer-line">
+      <div class="ss-buyer-right">
+        <span>خریدار:</span>
+        ${bName ? `<b>${esc(bName)}</b>` : '<span class="ss-blank-name"></span>'}
+      </div>
+      <div class="ss-buyer-left">
+        <span>شماره تماس:</span>
+        ${bTel ? `<bdi dir="ltr"><b>${faDigits(esc(bTel))}</b></bdi>` : '<span class="ss-blank-tel"></span>'}
+      </div>
     </div>
+
     <div class="tbl-fit"><div class="tbl-fit-in">
       <table class="tbl">
         <colgroup><col style="width:7%"><col style="width:45%"><col style="width:10%"><col style="width:18%"><col style="width:20%"></colgroup>
@@ -1208,27 +1264,24 @@ function buildSimple(t){
         <tfoot><tr><td colspan="4" style="text-align:right;padding-right:10px">جمع کل اقلام</td><td class="num">${money(t.sumTotal)}</td></tr></tfoot>
       </table>
     </div></div>
+
     <div class="ss-after">
       <div class="ss-summary-row">
         ${notesBlock}
         <div class="totals-box ss-totals${notes ? '' : ' full-w'}">
-          <div class="t-row"><span>جمع کل اقلام</span><b>${money(t.sumTotal)}</b></div>
           ${hasDiscount ? `<div class="t-row"><span>تخفیف کلی (${faDigits(t.gDiscPct)}٪)</span><b>${money(t.gDiscAmt)}</b></div>` : ''}
           ${hasDiscount ? `<div class="t-row"><span>مبلغ پس از تخفیف</span><b>${money(t.sumNet)}</b></div>` : ''}
           ${t.vatOn ? `<div class="t-row"><span>مالیات و عوارض (${faDigits(t.rate)}٪)</span><b>${money(t.sumTax)}</b></div>` : ''}
-          <div class="t-grand">
+          <div class="t-grand${hasExtraRows ? '' : ' only-row'}">
             <div class="t-grand-left">
-              <span>مبلغ قابل پرداخت</span>
+              <span class="t-grand-title">مبلغ قابل پرداخت</span>
               <div class="t-grand-words">به حروف: ${words(t.grand)} ${cur}</div>
             </div>
             <b class="t-grand-num">${money(t.grand)}<small>${cur}</small></b>
           </div>
         </div>
       </div>
-      <div class="ss-signs">
-        <div class="sign-box">مهر و امضای فروشنده</div>
-        <div class="sign-box">مهر و امضای خریدار</div>
-      </div>
+      ${signsBlock}
     </div>
   </div>`;
 }
@@ -1250,8 +1303,9 @@ function ofPartyBlock(party, title){
 }
 function buildOfficial(t){
   const cur = curWord();
-  const docTitle = state.docKind === 'proforma' ? 'پیش‌صورتحساب فروش کالا و خدمات' : 'صورتحساب فروش کالا و خدمات';
-  const numLabel = state.docKind === 'proforma' ? 'شماره پیش‌فاکتور:' : 'شماره صورتحساب:';
+  const isProforma = state.docKind === 'proforma';
+  const docTitle = isProforma ? 'پیش‌صورتحساب فروش کالا و خدمات' : 'صورتحساب فروش کالا و خدمات';
+  const numLabel = isProforma ? 'شماره پیش‌فاکتور:' : 'شماره صورتحساب:';
 
   const body = t.rows.length ? t.rows.map((r, i) => `<tr>
       <td class="num">${faDigits(i + 1)}</td>
@@ -1278,6 +1332,13 @@ function buildOfficial(t){
   const rowTaxSum = t.rows.reduce((a, r) => a + r.tax, 0);
   const rowFinalSum = t.rows.reduce((a, r) => a + r.final, 0);
   const hasGlobalDisc = t.gDiscOn && t.gDiscPct > 0;
+  const hasExtraRows = hasGlobalDisc || t.vatOn;
+
+  const signsBlock = state.showSignatures ? `
+    <div class="of-signs">
+      <div class="sign-box">مهر و امضای فروشنده</div>
+      <div class="sign-box">مهر و امضای خریدار</div>
+    </div>` : '';
 
   return `
   <div class="oframe"><div class="oframe-in">
@@ -1285,13 +1346,16 @@ function buildOfficial(t){
       <div></div>
       <div>
         <div class="of-title">${docTitle}</div>
-        <div class="of-subtitle">واحد پول: ${cur}</div>
+        ${isProforma ? `<div class="of-subtitle">این پیش‌فاکتور تا تاریخ <b>${dateStr(state.meta.dueDate)}</b> اعتبار دارد.</div>` : ''}
       </div>
       <div class="of-meta-box">
         <div><span>${numLabel}</span><b>${state.meta.number ? faDigits(esc(state.meta.number)) : ''}</b></div>
         <div><span>شماره سریال:</span><b>${state.meta.serial ? faDigits(esc(state.meta.serial)) : ''}</b></div>
-        <div><span>تاریخ صدور:</span><b>${dateStr(state.meta)}</b></div>
-        <div><span>نحوه تسویه:</span><b>${esc(state.meta.payment || 'نقدی')}</b></div>
+        <div><span>تاریخ صدور:</span><b>${dateStr(state.meta.date)}</b></div>
+        ${isProforma
+          ? `<div><span>تاریخ مهلت:</span><b>${dateStr(state.meta.dueDate)}</b></div>`
+          : `<div><span>نحوه تسویه:</span><b>${esc(state.meta.payment || 'نقدی')}</b></div>`
+        }
       </div>
     </div>
 
@@ -1321,25 +1385,19 @@ function buildOfficial(t){
       <div class="of-summary-row">
         ${notesBlock}
         <div class="totals-box of-totals${notes ? '' : ' full-w'}">
-          <div class="t-row"><span>جمع کل اقلام</span><b>${money(t.sumTotal)}</b></div>
-          ${t.sumDisc > 0 ? `<div class="t-row"><span>تخفیف اقلام</span><b>${money(t.sumDisc)}</b></div>` : ''}
           ${hasGlobalDisc ? `<div class="t-row"><span>تخفیف کلی (${faDigits(t.gDiscPct)}٪)</span><b>${money(t.gDiscAmt)}</b></div>` : ''}
-          <div class="t-row"><span>مبلغ خالص پس از تخفیف</span><b>${money(t.sumNet)}</b></div>
+          ${hasGlobalDisc ? `<div class="t-row"><span>مبلغ خالص پس از تخفیف</span><b>${money(t.sumNet)}</b></div>` : ''}
           ${t.vatOn ? `<div class="t-row"><span>مالیات و عوارض ارزش افزوده (${faDigits(t.rate)}٪)</span><b>${money(t.sumTax)}</b></div>` : ''}
-          <div class="t-grand">
+          <div class="t-grand${hasExtraRows ? '' : ' only-row'}">
             <div class="t-grand-left">
-              <span>مبلغ قابل پرداخت</span>
+              <span class="t-grand-title">مبلغ قابل پرداخت</span>
               <div class="t-grand-words">به حروف: ${words(t.grand)} ${cur}</div>
             </div>
             <b class="t-grand-num">${money(t.grand)}<small>${cur}</small></b>
           </div>
         </div>
       </div>
-
-      <div class="of-signs">
-        <div class="sign-box">مهر و امضای فروشنده</div>
-        <div class="sign-box">مهر و امضای خریدار</div>
-      </div>
+      ${signsBlock}
     </div>
   </div></div>`;
 }
@@ -1347,16 +1405,15 @@ const buildSheet = t => (state.type === 'official' ? buildOfficial(t) : buildSim
 const sheetDims  = () => (state.type === 'official' ? A4L : A4P);
 const sheetClass = () => (state.type === 'official' ? 's-official' : 's-simple');
 
-/* ---------- Fit table & half-A4 check ---------- */
+/* ---------- Fit table inside A4 (for both portrait and landscape) ---------- */
 function fitSheet(root){
   const fit = root.querySelector('.tbl-fit');
   const inner = root.querySelector('.tbl-fit-in');
   if (!fit || !inner) return;
   inner.style.transform = 'none';
   inner.style.width = '100%';
-  fit.style.maxHeight = 'none';
+  fit.style.height = '';
 
-  const isOfficial = state.type === 'official';
   const P = sheetDims();
   const cs = getComputedStyle(root);
   const padV = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
@@ -1365,13 +1422,6 @@ function fitSheet(root){
   const box = root.firstElementChild;
   if (!box) return;
 
-  // In landscape official mode, if total content fits comfortably within half A4 height (~385px), keep it half-page!
-  const halfTarget = Math.floor(P.h / 2) - 8;
-  if (isOfficial && box.offsetHeight <= halfTarget){
-    return;
-  }
-
-  // Otherwise ensure it fits within full A4 page height
   if (box.offsetHeight > maxInnerH){
     const otherH = box.offsetHeight - inner.offsetHeight;
     const avail = Math.max(80, maxInnerH - otherH);
@@ -1389,19 +1439,16 @@ function fitSheet(root){
    RENDERING
    ================================================================ */
 const sheetEl = $('#sheet'), wrapEl = $('#sheetWrap'), scroller = $('#scroller');
-let lastFit = 1, lastGrand = null, rafPending = false;
+let lastGrand = null, rafPending = false;
 
 function applyScale(){
   const P = sheetDims();
   const cs = getComputedStyle(scroller);
   const availW = scroller.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-  lastFit = Math.min(Math.max(availW, 100) / P.w, 1);
-  const s = state.zoom == null ? lastFit : state.zoom;
+  const s = Math.min(Math.max(availW, 100) / P.w, 1);
   wrapEl.style.width  = Math.round(P.w * s) + 'px';
   wrapEl.style.height = Math.round(P.h * s) + 'px';
   sheetEl.style.transform = `scale(${s})`;
-  $('#zoomVal').textContent = faDigits(Math.round(s * 100)) + '٪';
-  $('#zoomFit').classList.toggle('on', state.zoom == null);
 }
 function renderSheet(){
   const t = computeTotals();
@@ -1455,7 +1502,7 @@ function renderTotals(){
   $('#itemCount').textContent = faDigits(state.items.length) + ' قلم';
   const warns = [];
   if (!state.items.length) warns.push('هیچ قلمی ثبت نشده');
-  if (!String(state.seller.name).trim()) warns.push('نام فروشنده خالی است');
+  if (state.type === 'official' && !String(state.seller.name).trim()) warns.push('نام فروشنده خالی است');
   if (!String(state.buyer.name).trim()) warns.push('نام خریدار خالی است');
   $('#warnChip').hidden = !warns.length;
   $('#warnText').textContent = warns[0] || '';
@@ -1517,8 +1564,10 @@ function renderItems(){
 }
 function applyTypeHidden(){
   const official = state.type === 'official';
+  const proforma = state.docKind === 'proforma';
   $$('.only-official').forEach(el => el.hidden = !official);
   $$('.only-simple').forEach(el => el.hidden = official);
+  $$('.only-proforma').forEach(el => el.hidden = !proforma);
 }
 function updateCurLabels(){ $$('[data-cur]').forEach(el => el.textContent = curWord()); }
 function scheduleUpdate(){
@@ -1538,7 +1587,7 @@ function saveSoon(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     try{
-      const { tab, zoom, ...persist } = state;
+      const { tab, ...persist } = state;
       localStorage.setItem(KEY, JSON.stringify(persist));
       const dot = $('#saveDot');
       dot.classList.remove('pulse'); void dot.offsetWidth; dot.classList.add('pulse');
@@ -1551,17 +1600,20 @@ function saveSoon(){
 /* ================================================================
    EDITOR SYNC & INPUT HANDLING
    ================================================================ */
-function renderDateOptions(){
-  const dd = $('#f-dd'), mm = $('#f-mm'), yy = $('#f-yy');
-  const max = daysInMonth(state.meta.date.m);
-  if (state.meta.date.d > max) state.meta.date.d = max;
+function populateDateSelects(dd, mm, yy, dateObj){
+  const max = daysInMonth(dateObj.m);
+  if (dateObj.d > max) dateObj.d = max;
   dd.innerHTML = Array.from({ length: max }, (_, i) => `<option value="${i + 1}">${faDigits(i + 1)}</option>`).join('');
   mm.innerHTML = MONTHS.map((m, i) => `<option value="${i + 1}">${m}</option>`).join('');
   const jy = jToday().y;
   yy.innerHTML = Array.from({ length: 6 }, (_, i) => jy - 3 + i).map(y => `<option value="${y}">${faDigits(y)}</option>`).join('');
-  dd.value = String(state.meta.date.d);
-  mm.value = String(state.meta.date.m);
-  yy.value = String(state.meta.date.y);
+  dd.value = String(dateObj.d);
+  mm.value = String(dateObj.m);
+  yy.value = String(dateObj.y);
+}
+function renderDateOptions(){
+  populateDateSelects($('#f-dd'), $('#f-mm'), $('#f-yy'), state.meta.date);
+  populateDateSelects($('#f-due-dd'), $('#f-due-mm'), $('#f-due-yy'), state.meta.dueDate);
 }
 function syncEditor(){
   renderDateOptions();
@@ -1576,11 +1628,8 @@ function syncEditor(){
   $('#f-gdisc').disabled = !state.globalDiscount.enabled;
   $('#gdiscWrap').classList.toggle('off', !state.globalDiscount.enabled);
 
-  $$('.kind-btn[data-action="dockind"]').forEach(b => {
-    const on = b.dataset.val === state.docKind;
-    b.classList.toggle('on', on);
-    b.setAttribute('aria-pressed', on);
-  });
+  $('#dkSale').classList.toggle('selected', state.docKind === 'sale');
+  $('#dkProforma').classList.toggle('selected', state.docKind === 'proforma');
 
   $('#tcSimple').classList.toggle('selected', state.type === 'simple');
   $('#tcOfficial').classList.toggle('selected', state.type === 'official');
@@ -1641,14 +1690,18 @@ function handleInput(e){
     if (bind === 'vat.rate') el.value = v;
   }
   setPath(state, bind, v);
+  if (bind === 'docKind'){
+    $('#dkSale').classList.toggle('selected', state.docKind === 'sale');
+    $('#dkProforma').classList.toggle('selected', state.docKind === 'proforma');
+    applyTypeHidden();
+  }
   if (bind === 'type'){
     $('#tcSimple').classList.toggle('selected', state.type === 'simple');
     $('#tcOfficial').classList.toggle('selected', state.type === 'official');
     applyTypeHidden();
     wrapEl.classList.remove('pop'); void wrapEl.offsetWidth; wrapEl.classList.add('pop');
-    state.zoom = null;
   }
-  if (bind === 'meta.date.m') renderDateOptions();
+  if (bind === 'meta.date.m' || bind === 'meta.dueDate.m') renderDateOptions();
   if (bind === 'vat.enabled'){
     $('#f-rate').disabled = !v;
     $('#rateWrap').classList.toggle('off', !v);
@@ -1827,7 +1880,7 @@ function doSample(){
 }
 
 /* ================================================================
-   TABS / ZOOM / EVENTS / INIT
+   TABS / EVENTS / INIT
    ================================================================ */
 const mqDesktop = window.matchMedia('(min-width: 1024px)');
 function setTab(t){
@@ -1847,11 +1900,6 @@ function layoutMode(){
     $('#panePrev').hidden = false;
     requestAnimationFrame(applyScale);
   } else setTab(state.tab);
-}
-function setZoom(delta){
-  const base = state.zoom == null ? lastFit : state.zoom;
-  state.zoom = clamp(Math.round((base + delta) * 100) / 100, 0.3, 2.5);
-  applyScale();
 }
 function bindEvents(){
   const pane = $('#paneEdit');
@@ -1881,15 +1929,6 @@ function bindEvents(){
         scheduleUpdate();
         break;
       }
-      case 'dockind':
-        state.docKind = btn.dataset.val;
-        $$('.kind-btn[data-action="dockind"]').forEach(b => {
-          const on = b.dataset.val === state.docKind;
-          b.classList.toggle('on', on);
-          b.setAttribute('aria-pressed', on);
-        });
-        scheduleUpdate();
-        break;
       case 'currency':
         state.currency = btn.dataset.val;
         $$('.seg-btn[data-action="currency"]').forEach(b => {
@@ -1900,9 +1939,6 @@ function bindEvents(){
         updateCurLabels();
         scheduleUpdate();
         break;
-      case 'zoom-in': setZoom(0.2); break;
-      case 'zoom-out': setZoom(-0.2); break;
-      case 'zoom-fit': state.zoom = null; applyScale(); break;
       case 'tab': setTab(btn.dataset.tab); break;
       case 'chip': {
         const target = $(btn.dataset.target);
@@ -1920,11 +1956,6 @@ function bindEvents(){
   $('#modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && !$('#modal').hidden) closeModal();
-  });
-
-  sheetEl.addEventListener('dblclick', () => {
-    state.zoom = state.zoom == null ? clamp(lastFit * 1.8, 0.5, 2.5) : null;
-    applyScale();
   });
 
   if ('ResizeObserver' in window) new ResizeObserver(() => applyScale()).observe(scroller);
