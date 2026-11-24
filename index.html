@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1d4ed8">
+<meta name="description" content="فاکتورساز — صدور آنی فاکتور فروش و پیش‌فاکتور روی A4 با محاسبه خودکار، خروجی PDF و PNG">
+<title>فاکتورساز | صدور فاکتور A4</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d4ed8'/%3E%3Cpath d='M20 14h24v36l-4-3-4 3-4-3-4 3-4-3-4 3Z' fill='white'/%3E%3Cpath d='M25 24h14M25 31h14M25 38h8' stroke='%231d4ed8' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* ---------- Design tokens ---------- */
+:root{
+  --bg:#eef3fa; --bg2:#e4ecf7;
+  --surface:#ffffff; --surface2:#f7fafd;
+  --line:#d9e3f0; --line2:#c3d2e6;
+  --ink:#132743; --ink2:#33486b; --muted:#5a6c85; --faint:#8b9cb6;
+  --blue:#1d4ed8; --blue2:#2563eb; --blue3:#3b82f6; --navy:#1e3a8a; --deep:#12306e;
+  --blue-50:#eff6ff; --blue-100:#dbeafe; --blue-200:#bfdbfe;
+  --sky:#0284c7; --sky-50:#e0f2fe;
+  --ok:#0e9f6e; --ok-50:#e6f7f0;
+  --warn:#b45309; --warn-50:#fef3c7;
+  --danger:#dc2626; --danger-50:#fee2e2;
+  --r-lg:14px; --r-md:10px; --r-sm:8px;
+  --shadow-card:0 1px 2px rgba(16,42,94,.05),0 4px 14px -6px rgba(16,42,94,.08);
+  --shadow-pop:0 8px 30px -8px rgba(16,42,94,.28);
+  --header-h:64px; --tabs-h:48px; --bar-h:70px;
+  --font:'Vazirmatn',Tahoma,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font); color:var(--ink); background:var(--bg);
+  min-height:100vh; min-height:100dvh; -webkit-font-smoothing:antialiased;
+  touch-action:manipulation; overflow-x:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(900px 420px at 88% -8%, rgba(37,99,235,.10), transparent 60%),
+    radial-gradient(700px 380px at 6% 4%, rgba(2,132,199,.07), transparent 60%),
+    linear-gradient(180deg,#f6f9fd 0%, var(--bg) 40%, var(--bg2) 100%);
+}
+::selection{background:var(--blue-200);color:var(--deep)}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;user-select:none;-webkit-user-select:none}
+button:disabled{cursor:not-allowed}
+input,select,textarea{font-family:inherit;color:var(--ink)}
+:focus-visible{outline:2px solid var(--blue2);outline-offset:2px;border-radius:6px}
+.en{direction:ltr;unicode-bidi:embed;display:inline-block;letter-spacing:.05em;font-weight:700}
+
+/* ---------- Scrollbars ---------- */
+*{scrollbar-width:thin;scrollbar-color:#b7c8e2 transparent}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#bccbe4;border-radius:8px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:#7fa3e8;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-corner{background:transparent}
+
+/* ---------- Header ---------- */
+.app-header{
+  position:fixed; top:0; right:0; left:0; z-index:60; height:var(--header-h);
+  background:rgba(255,255,255,.88); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  display:flex; align-items:center; gap:14px; padding:0 22px;
+  animation:dropIn .45s ease both;
+}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-mark{width:38px;height:38px;flex-shrink:0;filter:drop-shadow(0 3px 6px rgba(29,78,216,.3))}
+.brand-text h1{font-size:17px;font-weight:800;color:var(--deep);line-height:1.2}
+.brand-text p{font-size:11px;color:var(--muted);font-weight:500}
+.header-actions{margin-inline-start:auto;display:flex;align-items:center;gap:8px}
+.hsep{width:1px;height:26px;background:var(--line);margin:0 4px}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  height:38px;padding:0 15px;border-radius:var(--r-md);font-size:13px;font-weight:700;
+  transition:transform .12s ease, box-shadow .15s ease, background .15s ease, border-color .15s;
+  white-space:nowrap;
+}
+.btn:active{transform:scale(.97)}
+.btn .ic{display:inline-flex}
+.btn-primary{
+  background:linear-gradient(180deg,var(--blue2),var(--blue));color:#fff;
+  box-shadow:0 2px 8px -2px rgba(29,78,216,.5), inset 0 1px 0 rgba(255,255,255,.18);
+}
+.btn-primary:hover{box-shadow:0 5px 16px -3px rgba(29,78,216,.55);background:linear-gradient(180deg,#3572f0,var(--blue))}
+.btn-outline{background:var(--surface);border:1px solid var(--line2);color:var(--blue)}
+.btn-outline:hover{border-color:var(--blue3);background:var(--blue-50)}
+.btn-ghost{background:transparent;border:1px solid transparent;color:var(--ink2)}
+.btn-ghost:hover{background:var(--blue-50);border-color:var(--line);color:var(--blue)}
+.btn-danger{background:linear-gradient(180deg,#ef4444,var(--danger));color:#fff;box-shadow:0 2px 8px -2px rgba(220,38,38,.45)}
+.btn-danger:hover{box-shadow:0 5px 14px -3px rgba(220,38,38,.5)}
+.btn.is-busy{opacity:.75;pointer-events:none}
+.iconbtn{
+  width:32px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--muted);border:1px solid transparent;transition:all .13s;flex-shrink:0;
+}
+.iconbtn:hover{background:var(--blue-50);color:var(--blue);border-color:var(--line)}
+.iconbtn:active{transform:scale(.92)}
+.iconbtn.danger:hover{background:var(--danger-50);color:var(--danger);border-color:#fecaca}
+.iconbtn:disabled{opacity:.3;pointer-events:none}
+.spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;animation:rot .7s linear infinite;display:inline-block}
+.btn-outline .spin,.btn-ghost .spin{border-color:var(--blue-200);border-top-color:var(--blue)}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* ---------- Mobile tabs ---------- */
+.tabs{
+  display:none; position:sticky; top:var(--header-h); z-index:50;
+  height:var(--tabs-h); background:rgba(255,255,255,.92); backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line); padding:6px 14px; gap:8px;
+}
+.tab{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:7px;
+  border-radius:9px;font-size:13.5px;font-weight:700;color:var(--muted);
+  border:1px solid transparent;transition:all .15s;
+}
+.tab[aria-selected="true"]{background:var(--blue-50);color:var(--blue);border-color:var(--blue-200);box-shadow:inset 0 0 0 1px rgba(37,99,235,.08)}
+.tab .ic{display:inline-flex}
+
+/* ---------- Layout ---------- */
+.layout{
+  display:grid; grid-template-columns:minmax(410px,490px) minmax(0,1fr);
+  gap:22px; max-width:1560px; margin:0 auto; padding:calc(var(--header-h) + 20px) 22px 46px;
+  align-items:start;
+}
+.editor{display:flex;flex-direction:column;gap:14px;min-width:0}
+
+/* ---------- Chips nav ---------- */
+.chips{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0;font-size:12px;font-weight:600;color:var(--muted);
+  padding:6px 13px;border-radius:99px;background:var(--surface);border:1px solid var(--line);
+  transition:all .14s;
+}
+.chip:hover{color:var(--blue);border-color:var(--blue-200)}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 2px 8px -2px rgba(29,78,216,.45)}
+
+/* ---------- Cards ---------- */
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-card);padding:18px;scroll-margin-top:calc(var(--header-h) + 20px);
+  animation:rise .5s ease both;
+}
+.editor>.card:nth-child(2){animation-delay:.04s}.editor>.card:nth-child(3){animation-delay:.08s}
+.editor>.card:nth-child(4){animation-delay:.12s}.editor>.card:nth-child(5){animation-delay:.16s}
+.editor>.card:nth-child(6){animation-delay:.2s}.editor>.card:nth-child(7){animation-delay:.24s}
+.editor>.card:nth-child(8){animation-delay:.28s}
+.card-head{display:flex;align-items:center;gap:10px;margin-bottom:15px;flex-wrap:wrap}
+.card-ico{
+  width:32px;height:32px;border-radius:9px;background:var(--blue-50);color:var(--blue);
+  display:flex;align-items:center;justify-content:center;border:1px solid var(--blue-100);flex-shrink:0;
+}
+.card-title{font-size:14.5px;font-weight:800;color:var(--deep)}
+.head-extra{margin-inline-start:auto;display:flex;align-items:center;gap:8px}
+.count-badge{font-size:11px;font-weight:700;background:var(--blue-50);color:var(--blue);border:1px solid var(--blue-100);padding:3px 9px;border-radius:99px}
+
+/* ---------- Fields ---------- */
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.lbl{font-size:11.5px;font-weight:700;color:var(--ink2)}
+.lbl small{font-weight:500;color:var(--faint)}
+.inp,.sel,.txa{
+  width:100%;height:42px;border:1px solid var(--line2);border-radius:var(--r-md);
+  background:var(--surface2);padding:0 12px;font-size:14px;font-weight:500;
+  transition:border-color .14s, box-shadow .14s, background .14s;
+}
+.inp:hover,.sel:hover,.txa:hover{border-color:#a9bedd}
+.inp:focus,.sel:focus,.txa:focus{outline:none;border-color:var(--blue2);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.13)}
+.inp::placeholder,.txa::placeholder{color:#9aa9c4;font-weight:400}
+.txa{height:auto;min-height:76px;padding:10px 12px;resize:vertical;line-height:1.8}
+.sel{
+  appearance:none;-webkit-appearance:none;cursor:pointer;padding-inline-end:30px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235a6c85' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:left 10px center;
+}
+.ltr{direction:ltr;text-align:right}
+.money{direction:ltr;text-align:right;font-weight:600}
+.num-in{direction:ltr;text-align:right}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.span2{grid-column:span 2}.span3{grid-column:span 3}
+.f-name{grid-column:span 2}
+.f-address{grid-column:span 2}
+.date-grid{display:grid;grid-template-columns:62px minmax(0,1fr) 82px;gap:7px}
+.inp-suffix{position:relative}
+.inp-suffix .inp{padding-inline-end:40px}
+.inp-suffix .iconbtn{position:absolute;inset-inline-end:5px;top:5px}
+.hint{font-size:11px;color:var(--faint);line-height:1.8}
+.flash-inp{animation:flashBorder .7s ease}
+@keyframes flashBorder{0%{box-shadow:0 0 0 4px rgba(37,99,235,.3);border-color:var(--blue2)}100%{box-shadow:none}}
+
+/* ---------- Doc kind selector ---------- */
+.doc-kind-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px}
+.kind-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;height:42px;
+  border-radius:11px;border:1.5px solid var(--line);background:var(--surface2);
+  font-size:13.5px;font-weight:800;color:var(--muted);transition:all .15s;
+}
+.kind-btn:hover{border-color:var(--blue3);color:var(--ink)}
+.kind-btn.on{border-color:var(--blue2);background:var(--blue-50);color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+
+/* ---------- Type cards ---------- */
+.type-cards{display:flex;flex-direction:column;gap:9px}
+.type-card{
+  display:flex;align-items:center;gap:13px;padding:13px 14px;border-radius:12px;
+  border:1.5px solid var(--line);background:var(--surface2);cursor:pointer;
+  transition:all .16s ease;position:relative;
+}
+.type-card:hover{border-color:var(--blue3);background:#fff}
+.type-card.selected{border-color:var(--blue2);background:var(--blue-50);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.type-card input{position:absolute;opacity:0;pointer-events:none}
+.tc-visual{width:44px;height:44px;border-radius:10px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tc-page{border:2px solid var(--blue);border-radius:3px;position:relative;background:linear-gradient(180deg,var(--blue-100) 0 26%,#fff 26%)}
+.tc-page::after{content:"";position:absolute;right:3px;left:3px;top:52%;height:2px;background:var(--blue-200);box-shadow:0 5px 0 var(--blue-200)}
+.tc-portrait{width:20px;height:28px}
+.tc-landscape{width:28px;height:20px}
+.tc-body{flex:1;min-width:0}
+.tc-body b{display:block;font-size:13.5px;font-weight:800;color:var(--deep)}
+.tc-body span{display:block;font-size:11px;color:var(--muted);margin-top:2px;line-height:1.7}
+.tc-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--line2);flex-shrink:0;position:relative;transition:border-color .15s}
+.type-card.selected .tc-radio{border-color:var(--blue)}
+.type-card.selected .tc-radio::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--blue);animation:popIn .2s ease}
+@keyframes popIn{from{transform:scale(.4)}to{transform:scale(1)}}
+
+/* ---------- Segmented ---------- */
+.seg{display:inline-flex;background:var(--surface2);border:1px solid var(--line2);border-radius:9px;padding:3px;gap:3px}
+.seg-btn{font-size:12px;font-weight:700;color:var(--muted);padding:5px 14px;border-radius:7px;transition:all .14s}
+.seg-btn.on{background:var(--blue);color:#fff;box-shadow:0 2px 6px -2px rgba(29,78,216,.5)}
+.seg-lbl{font-size:11.5px;font-weight:700;color:var(--ink2)}
+
+/* ---------- Items ---------- */
+.items{display:flex;flex-direction:column;gap:11px}
+.item{
+  border:1px solid var(--line);border-radius:12px;background:var(--surface2);
+  padding:12px;display:flex;flex-direction:column;gap:10px;transition:border-color .15s, box-shadow .15s;
+}
+.item:focus-within{border-color:var(--blue3);box-shadow:0 0 0 3px rgba(37,99,235,.09);background:#fff}
+.item.enter{animation:itemIn .28s ease}
+@keyframes itemIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.item-top{display:flex;align-items:center;gap:8px}
+.idx{
+  width:26px;height:26px;border-radius:8px;background:var(--blue-100);color:var(--deep);
+  font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.item-top .inp{flex:1;min-width:0;height:40px}
+.item-tools{display:flex;gap:2px;flex-shrink:0}
+.item-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.item-grid .inp,.item-grid .sel{height:39px;font-size:13.5px}
+.item-grid .lbl{font-size:10.5px}
+.f-price{grid-column:span 2}
+.f-code,.f-disc{grid-column:span 2}
+.item-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.net-chip{
+  font-size:12px;font-weight:800;color:var(--deep);background:var(--blue-50);
+  border:1px solid var(--blue-100);padding:4px 11px;border-radius:8px;
+}
+.tax-mini{font-size:10.5px;color:var(--muted);font-weight:500}
+.add-item{
+  width:100%;height:46px;border:1.5px dashed var(--blue3);border-radius:12px;color:var(--blue);
+  font-size:13.5px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;
+  background:rgba(37,99,235,.03);transition:all .15s;margin-top:11px;
+}
+.add-item:hover{background:var(--blue-50);border-style:solid;box-shadow:0 3px 10px -4px rgba(29,78,216,.35)}
+.add-item:active{transform:scale(.99)}
+.empty{
+  border:1.5px dashed var(--line2);border-radius:12px;padding:26px 16px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:9px;color:var(--muted);
+}
+.empty .card-ico{width:42px;height:42px}
+.empty b{font-size:13px;color:var(--ink2)}
+.empty span{font-size:11.5px}
+.items-hint{margin-top:9px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+kbd{font-family:var(--font);font-size:10px;background:var(--surface);border:1px solid var(--line2);border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--ink2)}
+
+/* ---------- Switch, VAT & Global Discount ---------- */
+.vat-row{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:11px;background:var(--surface2);margin-bottom:10px;flex-wrap:wrap}
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;flex:1;min-width:170px}
+.switch input{position:absolute;opacity:0;width:0;height:0}
+.sw-track{width:44px;height:24px;border-radius:99px;background:#c6d3e6;position:relative;transition:background .18s;flex-shrink:0}
+.sw-track::after{content:"";position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .18s ease}
+.switch input:checked+.sw-track{background:var(--blue)}
+.switch input:checked+.sw-track::after{transform:translateX(-20px)}
+.switch input:focus-visible+.sw-track{outline:2px solid var(--blue2);outline-offset:2px}
+.sw-text b{font-size:13px;font-weight:800;color:var(--ink);display:block}
+.sw-text span{font-size:10.5px;color:var(--muted)}
+.rate-wrap{display:flex;align-items:center;gap:7px;transition:opacity .15s}
+.rate-wrap.off{opacity:.4;pointer-events:none}
+.rate-wrap .inp{width:74px;height:38px;text-align:center;direction:ltr;font-weight:700}
+.rate-wrap span{font-size:13px;font-weight:800;color:var(--ink2)}
+
+/* ---------- Summary ---------- */
+.sum-table{display:flex;flex-direction:column;gap:2px;margin-top:4px}
+.sum-row{display:flex;align-items:center;justify-content:space-between;padding:8px 4px;font-size:13px;border-bottom:1px dashed var(--line)}
+.sum-row span{color:var(--muted);font-weight:600}
+.sum-row b{font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.sum-row.minus b{color:var(--danger)}
+.sum-grand{
+  margin-top:11px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;
+  border-radius:11px;padding:13px 16px;box-shadow:0 6px 18px -6px rgba(30,58,138,.55);
+}
+.sum-grand span{font-size:12.5px;font-weight:700;opacity:.9}
+.sum-grand b{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+.sum-grand b small{font-size:11.5px;font-weight:600;opacity:.85;margin-inline-start:4px}
+.sum-grand.flash{animation:grandFlash .55s ease}
+@keyframes grandFlash{0%{box-shadow:0 0 0 5px rgba(37,99,235,.35)}100%{box-shadow:0 6px 18px -6px rgba(30,58,138,.55)}}
+
+/* ---------- Editor footer ---------- */
+.editor-foot{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);padding:2px 6px;flex-wrap:wrap}
+.save-dot{width:7px;height:7px;border-radius:50%;background:var(--ok);flex-shrink:0;box-shadow:0 0 0 3px var(--ok-50)}
+.save-dot.pulse{animation:savePulse .8s ease}
+@keyframes savePulse{0%{box-shadow:0 0 0 0 rgba(14,159,110,.5)}100%{box-shadow:0 0 0 8px rgba(14,159,110,0)}}
+
+/* ---------- Preview ---------- */
+.preview{
+  position:sticky;top:calc(var(--header-h) + 16px);height:calc(100vh - var(--header-h) - 34px);
+  display:flex;flex-direction:column;min-width:0;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-card);overflow:hidden;animation:rise .5s .1s ease both;
+}
+.toolbar{
+  display:flex;align-items:center;gap:9px;padding:10px 14px;border-bottom:1px solid var(--line);
+  background:var(--surface2);flex-wrap:wrap;flex-shrink:0;
+}
+.live{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:var(--ink2)}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);position:relative}
+.live-dot::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid rgba(14,159,110,.4);animation:ping 1.8s ease-out infinite}
+@keyframes ping{0%{transform:scale(.5);opacity:1}80%,100%{transform:scale(1.4);opacity:0}}
+.badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;background:var(--blue-50);color:var(--blue);border:1px solid var(--blue-100);white-space:nowrap}
+.badge.dim{background:var(--surface);color:var(--muted);border-color:var(--line)}
+.chip-warn{
+  display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--warn);
+  background:var(--warn-50);border:1px solid #fde68a;padding:4px 10px;border-radius:99px;
+}
+.zoom{margin-inline-start:auto;display:flex;align-items:center;gap:3px;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:3px}
+.zoom .iconbtn{width:28px;height:28px}
+.zoom-val{font-size:11.5px;font-weight:800;color:var(--ink2);min-width:44px;text-align:center;font-variant-numeric:tabular-nums}
+.zoom .fit-btn{width:auto;padding:0 9px;gap:5px;font-size:11px;font-weight:700;display:inline-flex;align-items:center}
+.zoom .fit-btn.on{background:var(--blue-50);color:var(--blue)}
+.scroller{
+  flex:1;min-height:0;overflow:auto;padding:24px;scrollbar-gutter:stable;
+  background:
+    radial-gradient(rgba(30,58,138,.10) 1px, transparent 1px) 0 0/22px 22px,
+    linear-gradient(180deg,#e9f0f9,#e2ebf6);
+}
+.sheet-wrap{position:relative;margin-inline:auto;flex-shrink:0}
+.sheet-wrap.pop{animation:sheetPop .35s ease}
+@keyframes sheetPop{from{opacity:.4;transform:translateY(10px)}to{opacity:1;transform:none}}
+.sheet-shadow{position:absolute;inset:0;border-radius:2px;box-shadow:0 2px 5px rgba(16,42,94,.18),0 22px 44px -14px rgba(16,42,94,.4);pointer-events:none}
+
+/* ============================================================
+   INVOICE SHEET — Formal Black & White Print Aesthetic
+   ============================================================ */
+.sheet{
+  position:absolute;top:0;right:0;transform-origin:top right;background:#ffffff;color:#111111;
+  font-family:var(--font);display:flex;flex-direction:column;
+}
+.sheet *{box-sizing:border-box}
+.sheet .num{text-align:center;font-variant-numeric:tabular-nums}
+.tbl{width:100%;border-collapse:collapse;table-layout:fixed}
+.tbl th{
+  background:#1f2937;color:#ffffff;border:1px solid #111827;font-weight:700;
+  line-height:1.4;vertical-align:middle;
+}
+.tbl td{border:1px solid #9ca3af;vertical-align:middle;word-wrap:break-word;color:#111827}
+.tbl tbody tr:nth-child(even) td{background:#f9fafb}
+.tbl tfoot td{background:#f3f4f6;font-weight:800;color:#000000;border:1px solid #4b5563;border-top:2px solid #111827}
+.tbl .desc-cell{text-align:right}
+.tbl .strong{font-weight:800;color:#000000}
+.tbl .minus{color:#111827}
+.tbl .dim{color:#6b7280}
+.tbl-fit{min-height:0;overflow:hidden;position:relative}
+.tbl-fit-in{transform-origin:top right}
+.empty-row td{text-align:center;color:#9ca3af;height:90px;font-size:12px}
+
+.sign-box{
+  border:1px solid #4b5563;border-radius:4px;color:#1f2937;font-weight:700;
+  text-align:center;padding-top:8px;background:#ffffff;
+}
+.notes-label{font-size:10.5px;font-weight:800;color:#111827;display:block;margin-bottom:3px}
+.notes-text{color:#1f2937;line-height:1.85;white-space:pre-wrap;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical}
+.totals-box{border:1px solid #4b5563;border-radius:4px;overflow:hidden;background:#ffffff}
+.t-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 11px;border-bottom:1px solid #d1d5db}
+.t-row span{color:#374151;font-weight:600}
+.t-row b{font-weight:700;font-variant-numeric:tabular-nums;color:#111827}
+.t-grand{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  background:#1f2937;color:#ffffff;padding:9px 12px;border-top:1.5px solid #111827;
+}
+.t-grand-left{display:flex;flex-direction:column;gap:2px;min-width:0}
+.t-grand-left span{font-weight:700}
+.t-grand-words{font-size:10.5px;font-weight:500;opacity:.92;line-height:1.5}
+.t-grand-num{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;flex-shrink:0}
+.t-grand-num small{font-weight:600;opacity:.9;margin-inline-start:3px}
+
+/* ----- Simple / portrait (B&W Formal) ----- */
+.s-simple{padding:36px 40px 28px;font-size:13px}
+.ss-frame{border:1.5px solid #1f2937;padding:22px 24px;display:flex;flex-direction:column}
+.ss-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:12px;border-bottom:2px solid #1f2937}
+.ss-title{font-size:22px;font-weight:900;color:#111827;line-height:1.25}
+.ss-meta{display:flex;flex-direction:column;gap:5px;min-width:190px;border:1px solid #9ca3af;border-radius:4px;padding:7px 11px;background:#f9fafb}
+.meta-row{display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:11.5px}
+.meta-row span{color:#4b5563;font-weight:600}
+.meta-row b{color:#111827;font-weight:800;font-variant-numeric:tabular-nums}
+.ss-parties{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:13px 0}
+.party{border:1px solid #9ca3af;border-radius:4px;padding:10px 12px;background:#ffffff;min-width:0}
+.p-role{font-size:10.5px;font-weight:800;color:#374151;display:block;border-bottom:1px solid #e5e7eb;padding-bottom:4px;margin-bottom:5px}
+.p-name{font-size:14px;font-weight:800;color:#111827;display:block;margin-bottom:4px;min-height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.p-tel{font-size:11.5px;color:#374151;display:block;min-height:18px}
+.p-tel bdi{font-weight:700;color:#111827;font-variant-numeric:tabular-nums}
+.s-simple .tbl th{font-size:12px;padding:8px 8px}
+.s-simple .tbl td{font-size:12.5px;padding:8px 9px;line-height:1.6}
+.s-simple .tbl .desc-cell{font-size:13px}
+.s-simple .tbl tfoot td{padding:8px 9px;font-size:12.5px}
+
+.ss-after{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.ss-summary-row{display:flex;gap:12px;align-items:stretch}
+.ss-notes{flex:1;min-width:0;border:1px solid #9ca3af;border-radius:4px;padding:9px 11px;background:#f9fafb}
+.ss-notes .notes-text{font-size:11px;-webkit-line-clamp:4}
+.ss-totals{width:340px;flex-shrink:0;font-size:12px}
+.ss-totals.full-w{width:100%}
+.ss-totals .t-grand{font-size:12.5px;padding:10px 12px}
+.ss-totals .t-grand-num{font-size:16px}
+.ss-signs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ss-signs .sign-box{height:82px;font-size:11px}
+
+/* ----- Official / landscape (Standard Iranian Tax Invoice Style - B&W) ----- */
+.s-official{padding:14px 16px;font-size:10.5px}
+.oframe{border:2px solid #111827;padding:2px}
+.oframe-in{border:1px solid #374151;padding:11px 14px;display:flex;flex-direction:column;gap:7px}
+
+.of-top-bar{
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+  border-bottom:1.5px solid #111827;padding-bottom:6px;gap:10px;
+}
+.of-title{font-size:16px;font-weight:900;color:#000000;text-align:center;letter-spacing:-0.01em}
+.of-subtitle{font-size:10px;color:#374151;text-align:center;font-weight:600;margin-top:1px}
+.of-meta-box{
+  justify-self:end;border:1px solid #4b5563;background:#f9fafb;
+  padding:4px 9px;display:grid;grid-template-columns:auto auto;gap:2px 14px;font-size:10px;
+}
+.of-meta-box div{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.of-meta-box span{color:#4b5563;font-weight:600}
+.of-meta-box b{color:#000000;font-weight:800;font-variant-numeric:tabular-nums}
+
+.of-parties{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.of-party{border:1px solid #4b5563;background:#ffffff;display:flex;flex-direction:column}
+.ofp-title{
+  background:#e5e7eb;color:#000000;font-size:10.5px;font-weight:800;
+  padding:3.5px 8px;border-bottom:1px solid #4b5563;text-align:center;
+}
+.ofp-grid{
+  padding:4px 8px;display:grid;grid-template-columns:1.25fr 1fr;gap:2px 12px;font-size:10px;line-height:1.55;
+}
+.ofp-item{display:flex;align-items:baseline;gap:5px;min-width:0;min-height:16px}
+.ofp-item.full{grid-column:span 2}
+.ofp-item span{color:#4b5563;font-weight:600;flex-shrink:0}
+.ofp-item b{font-weight:700;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ofp-item.name-item b{font-size:11px;font-weight:800;color:#000000}
+
+.s-official .tbl th{font-size:9.5px;padding:5px 3px;background:#e5e7eb;color:#000000;border:1px solid #4b5563}
+.s-official .tbl td{font-size:10.2px;padding:4.5px 4px;line-height:1.45;border:1px solid #6b7280}
+.s-official .tbl .desc-cell{font-size:10.5px;padding:4.5px 7px}
+.s-official .tbl tfoot td{padding:5px 4px;font-size:10.2px;background:#f3f4f6;color:#000000;border:1px solid #4b5563;border-top:1.5px solid #111827}
+
+.of-after{display:flex;flex-direction:column;gap:7px}
+.of-summary-row{display:flex;gap:8px;align-items:stretch}
+.of-notes{flex:1;min-width:0;border:1px solid #6b7280;padding:6px 10px;background:#ffffff}
+.of-notes .notes-text{font-size:10px;-webkit-line-clamp:4}
+.of-totals{width:430px;flex-shrink:0;font-size:10.3px;border-radius:0}
+.of-totals.full-w{width:100%}
+.of-totals .t-row{padding:4px 10px}
+.of-totals .t-grand{padding:6.5px 10px;font-size:11px;background:#e5e7eb;color:#000000;border-top:1.5px solid #111827}
+.of-totals .t-grand-words{color:#1f2937;font-size:10px}
+.of-totals .t-grand-num{font-size:13.5px}
+
+.of-signs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.of-signs .sign-box{height:62px;font-size:10.5px;border-radius:0;border:1px solid #4b5563}
+
+/* ---------- Bottom bar (mobile) ---------- */
+.bottombar{
+  display:none;position:fixed;bottom:0;right:0;left:0;z-index:55;
+  background:rgba(255,255,255,.95);backdrop-filter:blur(10px);
+  border-top:1px solid var(--line);box-shadow:0 -6px 24px -10px rgba(16,42,94,.2);
+  padding:9px 14px calc(9px + env(safe-area-inset-bottom));
+  align-items:center;gap:8px;transition:transform .2s ease;
+}
+.bottombar.kb-hide{transform:translateY(110%)}
+.bar-amount{flex:1;min-width:0}
+.bar-amount span{display:block;font-size:10.5px;font-weight:700;color:var(--muted)}
+.bar-amount b{display:block;font-size:18px;font-weight:900;color:var(--deep);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}
+.bar-amount b small{font-size:11px;font-weight:700;color:var(--muted)}
+.bar-png{width:42px;height:42px;padding:0;flex-shrink:0;border-radius:10px}
+.bar-pdf{flex:0 0 auto;height:42px;padding:0 13px;font-size:12.5px;border-radius:10px}
+
+/* ---------- Toasts ---------- */
+.toasts{
+  position:fixed;bottom:22px;left:22px;z-index:90;display:flex;flex-direction:column;gap:9px;
+  max-width:min(360px,calc(100vw - 32px));
+}
+.toast{
+  display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);
+  border-inline-start:4px solid var(--blue);border-radius:11px;padding:11px 13px;
+  box-shadow:var(--shadow-pop);font-size:12.5px;font-weight:600;color:var(--ink2);
+  animation:toastIn .3s ease;
+}
+.toast.out{animation:toastOut .25s ease forwards}
+.toast .t-ico{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast.success{border-inline-start-color:var(--ok)}.toast.success .t-ico{background:var(--ok-50);color:var(--ok)}
+.toast.info{border-inline-start-color:var(--blue2)}.toast.info .t-ico{background:var(--blue-50);color:var(--blue)}
+.toast.warn{border-inline-start-color:#d97706}.toast.warn .t-ico{background:var(--warn-50);color:var(--warn)}
+.toast.danger{border-inline-start-color:var(--danger)}.toast.danger .t-ico{background:var(--danger-50);color:var(--danger)}
+.toast .t-msg{flex:1;line-height:1.7}
+.toast .t-act{font-size:12px;font-weight:800;color:var(--blue);background:var(--blue-50);border:1px solid var(--blue-100);padding:5px 11px;border-radius:8px;flex-shrink:0}
+.toast .t-act:hover{background:var(--blue-100)}
+.toast .t-x{color:var(--faint);flex-shrink:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.toast .t-x:hover{background:var(--surface2);color:var(--ink2)}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px)}}
+
+/* ---------- Modal ---------- */
+.modal-overlay{
+  position:fixed;inset:0;z-index:100;background:rgba(15,30,60,.45);
+  backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:20px;
+  animation:fadeIn .2s ease;
+}
+.modal{
+  background:#fff;border-radius:16px;padding:24px;width:100%;max-width:380px;
+  box-shadow:0 24px 60px -12px rgba(16,42,94,.45);animation:modalIn .25s ease;
+}
+.modal-ico{width:46px;height:46px;border-radius:13px;background:var(--danger-50);color:var(--danger);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.modal h3{font-size:16px;font-weight:800;color:var(--ink);margin-bottom:7px}
+.modal p{font-size:12.5px;color:var(--muted);line-height:2;margin-bottom:18px}
+.modal-btns{display:flex;gap:9px}
+.modal-btns .btn{flex:1;height:42px}
+@keyframes fadeIn{from{opacity:0}}
+@keyframes modalIn{from{opacity:0;transform:scale(.94) translateY(8px)}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes dropIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1200px){
+  .layout{grid-template-columns:minmax(380px,430px) minmax(0,1fr);gap:16px;padding-inline:16px}
+}
+@media (max-width:1023px){
+  :root{--header-h:56px}
+  .app-header{padding:0 14px}
+  .brand-text p{display:none}
+  .brand-text h1{font-size:15.5px}
+  .brand-mark{width:33px;height:33px}
+  .header-export{display:none}
+  .hsep{display:none}
+  .btn-label{display:none}
+  .header-actions .btn{width:38px;padding:0}
+  .tabs{display:flex}
+  .layout{display:block;padding:12px 13px calc(var(--bar-h) + 46px + env(safe-area-inset-bottom));max-width:720px}
+  .card{scroll-margin-top:calc(var(--header-h) + var(--tabs-h) + 14px);padding:15px}
+  .inp,.sel,.txa{font-size:16px;height:44px}
+  .item-grid .inp,.item-grid .sel{font-size:16px;height:42px}
+  .preview{
+    position:static;height:calc(100vh - var(--header-h) - var(--tabs-h) - var(--bar-h) - 30px);
+    height:calc(100dvh - var(--header-h) - var(--tabs-h) - var(--bar-h) - 30px);
+    min-height:340px;animation:none;
+  }
+  .scroller{padding:13px}
+  .bottombar{display:flex}
+  .toasts{bottom:calc(var(--bar-h) + 14px + env(safe-area-inset-bottom));left:14px;right:14px;max-width:none}
+  .items-hint .kbd-hint{display:none}
+  .editor{gap:12px}
+}
+@media (max-width:520px){
+  .grid3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .span3{grid-column:span 2}
+  .f-name{grid-column:span 2}
+  .f-phone{grid-column:span 2}
+  .f-address{grid-column:span 2}
+  .item-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .f-price{grid-column:span 2}
+  .f-code,.f-disc{grid-column:span 1}
+  .date-grid{grid-template-columns:56px minmax(0,1fr) 78px}
+  .toolbar{padding:8px 10px;gap:6px}
+  .live span{display:none}
+  .badge.dim{display:none}
+  .zoom{margin-inline-start:auto}
+  .head-extra{width:100%;margin-inline-start:42px;justify-content:flex-start}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= Header ================= -->
+<header class="app-header">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+      <defs><linearGradient id="bmg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#1e3a8a"/>
+      </linearGradient></defs>
+      <rect width="64" height="64" rx="15" fill="url(#bmg)"/>
+      <path d="M20 13h24v38l-4-3-4 3-4-3-4 3-4-3-4 3Z" fill="#fff"/>
+      <path d="M25 23h14M25 30h14M25 37h8" stroke="#1d4ed8" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <div class="brand-text">
+      <h1>فاکتورساز</h1>
+      <p>صدور آنی فاکتور روی <span class="en">A4</span></p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button type="button" class="btn btn-ghost" data-action="sample" title="بارگذاری فاکتور نمونه">
+      <span class="ic" data-ico="file"></span><span class="btn-label">فاکتور نمونه</span>
+    </button>
+    <button type="button" class="btn btn-ghost" data-action="new" title="شروع فاکتور جدید">
+      <span class="ic" data-ico="rotate"></span><span class="btn-label">فاکتور جدید</span>
+    </button>
+    <span class="hsep header-export"></span>
+    <button type="button" class="btn btn-outline header-export" data-action="export-png" data-export="png">
+      <span class="ic" data-ico="image"></span><span class="btn-label">خروجی <span class="en">PNG</span></span>
+    </button>
+    <button type="button" class="btn btn-primary header-export" data-action="export-pdf" data-export="pdf">
+      <span class="ic" data-ico="download"></span><span class="btn-label">خروجی <span class="en">PDF</span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ================= Mobile tabs ================= -->
+<nav class="tabs" role="tablist" aria-label="بخش‌ها">
+  <button type="button" class="tab" role="tab" id="tab-edit" data-action="tab" data-tab="edit" aria-selected="true">
+    <span class="ic" data-ico="pen"></span>ویرایش فاکتور
+  </button>
+  <button type="button" class="tab" role="tab" id="tab-prev" data-action="tab" data-tab="prev" aria-selected="false">
+    <span class="ic" data-ico="eye"></span>پیش‌نمایش
+  </button>
+</nav>
+
+<main class="layout">
+  <!-- ================= Editor ================= -->
+  <section class="editor" id="paneEdit" aria-label="ویرایش فاکتور">
+
+    <div class="chips" id="chips">
+      <button type="button" class="chip" data-action="chip" data-target="#card-type">نوع فاکتور</button>
+      <button type="button" class="chip" data-action="chip" data-target="#card-meta">اطلاعات فاکتور</button>
+      <button type="button" class="chip" data-action="chip" data-target="#card-seller">فروشنده</button>
+      <button type="button" class="chip" data-action="chip" data-target="#card-buyer">خریدار</button>
+      <button type="button" class="chip" data-action="chip" data-target="#card-items">اقلام</button>
+      <button type="button" class="chip" data-action="chip" data-target="#card-sums">مالیات و جمع</button>
+      <button type="button" class="chip" data-action="chip" data-target="#card-notes">توضیحات</button>
+    </div>
+
+    <!-- نوع فاکتور -->
+    <div class="card" id="card-type">
+      <div class="card-head">
+        <span class="card-ico"><span class="ic" data-ico="file"></span></span>
+        <span class="card-title">نوع سند و قالب فاکتور</span>
+      </div>
+      <div class="doc-kind-grid" role="group" aria-label="عنوان سند">
+        <button type="button" class="kind-btn" data-action="dockind" data-val="sale" aria-pressed="true">۱. فاکتور فروش</button>
+        <button type="button" class="kind-btn" data-action="dockind" data-val="proforma" aria-pressed="false">۲. پیش‌فاکتور</button>
+      </div>
+      <div class="type-cards" role="radiogroup" aria-label="نوع قالب فاکتور">
+        <label class="type-card" id="tcSimple">
+          <input type="radio" name="invtype" value="simple" data-bind="type" id="t-simple">
+          <span class="tc-visual"><span class="tc-page tc-portrait"></span></span>
+          <span class="tc-body">
+            <b>فاکتور عمودی — ساده</b>
+            <span>A4 عمودی؛ اطلاعات مختصر خریدار و فروشنده، مناسب فروش سریع</span>
+          </span>
+          <span class="tc-radio"></span>
+        </label>
+        <label class="type-card" id="tcOfficial">
+          <input type="radio" name="invtype" value="official" data-bind="type" id="t-official">
+          <span class="tc-visual"><span class="tc-page tc-landscape"></span></span>
+          <span class="tc-body">
+            <b>فاکتور افقی — رسمی</b>
+            <span>A4 افقی؛ صورتحساب رسمی با مشخصات کامل طرفین، کد اقتصادی، مالیات و امضا</span>
+          </span>
+          <span class="tc-radio"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- اطلاعات فاکتور -->
+    <div class="card" id="card-meta">
+      <div class="card-head">
+        <span class="card-ico"><span class="ic" data-ico="hash"></span></span>
+        <span class="card-title">اطلاعات فاکتور</span>
+      </div>
+      <div class="grid3">
+        <div class="field">
+          <label class="lbl" for="f-number">شماره فاکتور</label>
+          <div class="inp-suffix">
+            <input class="inp ltr" id="f-number" data-bind="meta.number" data-digits maxlength="8" inputmode="numeric" autocomplete="off" placeholder="1001">
+            <button type="button" class="iconbtn" data-action="regen" title="شماره بعدی" aria-label="شماره بعدی"><span class="ic" data-ico="rotate" data-s="15"></span></button>
+          </div>
+        </div>
+        <div class="field span2">
+          <label class="lbl" for="f-mm">تاریخ صدور <small>(شمسی)</small></label>
+          <div class="date-grid">
+            <select class="sel" id="f-dd" data-bind="meta.date.d" data-int aria-label="روز"></select>
+            <select class="sel" id="f-mm" data-bind="meta.date.m" data-int aria-label="ماه"></select>
+            <select class="sel" id="f-yy" data-bind="meta.date.y" data-int aria-label="سال"></select>
+          </div>
+        </div>
+        <div class="field only-official">
+          <label class="lbl" for="f-serial">شماره سریال</label>
+          <input class="inp ltr" id="f-serial" data-bind="meta.serial" data-digits maxlength="6" inputmode="numeric" autocomplete="off" placeholder="246810">
+        </div>
+        <div class="field only-official">
+          <label class="lbl" for="f-payment">نحوه تسویه</label>
+          <select class="sel" id="f-payment" data-bind="meta.payment">
+            <option value="نقدی">نقدی</option>
+            <option value="غیرنقدی">غیرنقدی</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- فروشنده -->
+    <div class="card" id="card-seller">
+      <div class="card-head">
+        <span class="card-ico"><span class="ic" data-ico="store"></span></span>
+        <span class="card-title">اطلاعات فروشنده</span>
+      </div>
+      <div class="grid3">
+        <div class="field f-name">
+          <label class="lbl" for="s-name">نام شخص / شرکت</label>
+          <input class="inp" id="s-name" data-bind="seller.name" autocomplete="off" placeholder="مثلاً: شرکت تجارت آوان پارس">
+        </div>
+        <div class="field f-phone">
+          <label class="lbl" for="s-phone">تلفن</label>
+          <input class="inp ltr" id="s-phone" data-bind="seller.phone" data-phone inputmode="tel" autocomplete="off" placeholder="021-88776655">
+        </div>
+        <div class="field only-official">
+          <label class="lbl" for="s-econ">کد اقتصادی / شناسه ملی</label>
+          <input class="inp ltr" id="s-econ" data-bind="seller.econ" data-digits maxlength="12" inputmode="numeric" autocomplete="off" placeholder="14003345678">
+        </div>
+        <div class="field only-official">
+          <label class="lbl" for="s-reg">شماره ثبت</label>
+          <input class="inp ltr" id="s-reg" data-bind="seller.reg" data-digits maxlength="8" inputmode="numeric" autocomplete="off" placeholder="548761">
+        </div>
+        <div class="field only-official">
+          <label class="lbl" for="s-postal">کد پستی</label>
+          <input class="inp ltr" id="s-postal" data-bind="seller.postal" data-digits maxlength="10" inputmode="numeric" autocomplete="off" placeholder="1587634521">
+        </div>
+        <div class="field only-official">
+          <label class="lbl" for="s-city">استان / شهر</label>
+          <input class="inp" id="s-city" data-bind="seller.city" autocomplete="off" placeholder="تهران / تهران">
+        </div>
+        <div class="field f-address only-official">
+          <label class="lbl" for="s-address">نشانی</label>
+          <input class="inp" id="s-address" data-bind="seller.address" autocomplete="off" placeholder="تهران، خیابان ولیعصر، کوچه نگار، پلاک ۱۲">
+        </div>
+      </div>
+    </div>
+
+    <!-- خریدار -->
+    <div class="card" id="card-buyer">
+      <div class="card-head">
+        <span class="card-ico"><span class="ic" data-ico="user"></span></span>
+        <span class="card-title">اطلاعات خریدار</span>
+      </div>
+      <div class="grid3">
+        <div class="field f-name">
+          <label class="lbl" for="b-name">نام شخص / شرکت</label>
+          <input class="inp" id="b-name" data-bind="buyer.name" autocomplete="off" placeholder="مثلاً: فروشگاه لوازم اداری البرز">
+        </div>
+        <div class="field f-phone">
+          <label class="lbl" for="b-phone">تلفن</label>
+          <input class="inp ltr" id="b-phone" data-bind="buyer.phone" data-phone inputmode="tel" autocomplete="off" placeholder="026-34455667">
+        </div>
+        <div class="field only-official">
+          <label class="lbl" for="b-econ">کد اقتصادی / شناسه ملی</label>
+          <input class="inp ltr" id="b-econ" data-bind="buyer.econ" data-digits maxlength="12" inputmode="numeric" autocomplete="off" placeholder="14005567890">
+        </div>
+        <div class="field only-official">
+          <label class="lbl" for="b-reg">شماره ثبت</label>
+          <input class="inp ltr" id="b-reg" data-bind="buyer.reg" data-digits maxlength="8" inputmode="numeric" autocomplete="off" placeholder="—">
+        </div>
+        <div class="field only-official">
+          <label class="lbl" for="b-postal">کد پستی</label>
+          <input class="inp ltr" id="b-postal" data-bind="buyer.postal" data-digits maxlength="10" inputmode="numeric" autocomplete="off" placeholder="3154887612">
+        </div>
+        <div class="field only-official">
+          <label class="lbl" for="b-city">استان / شهر</label>
+          <input class="inp" id="b-city" data-bind="buyer.city" autocomplete="off" placeholder="البرز / کرج">
+        </div>
+        <div class="field f-address only-official">
+          <label class="lbl" for="b-address">نشانی</label>
+          <input class="inp" id="b-address" data-bind="buyer.address" autocomplete="off" placeholder="کرج، خیابان طالقانی، نبش کوچه مهر، پلاک ۸۶">
+        </div>
+      </div>
+    </div>
+
+    <!-- اقلام -->
+    <div class="card" id="card-items">
+      <div class="card-head">
+        <span class="card-ico"><span class="ic" data-ico="box"></span></span>
+        <span class="card-title">اقلام فاکتور</span>
+        <span class="count-badge" id="itemCount">۰ قلم</span>
+        <div class="head-extra">
+          <span class="seg-lbl">واحد پول:</span>
+          <div class="seg" role="group" aria-label="واحد پول">
+            <button type="button" class="seg-btn" data-action="currency" data-val="toman" aria-pressed="false">تومان</button>
+            <button type="button" class="seg-btn" data-action="currency" data-val="rial" aria-pressed="true">ریال</button>
+          </div>
+        </div>
+      </div>
+      <div class="items" id="itemsList"></div>
+      <button type="button" class="add-item" data-action="add-item" id="addItemBtn">
+        <span class="ic" data-ico="plus"></span>افزودن قلم جدید
+      </button>
+      <div class="items-hint">
+        <span class="hint only-simple">برای تخفیف سطری و کد کالا، از فاکتور رسمی استفاده کنید.</span>
+        <span class="hint only-official">تخفیف هر قلم به مبلغ همان سطر وارد می‌شود.</span>
+        <span class="hint kbd-hint">میان‌بر: <kbd>Ctrl</kbd> + <kbd>Enter</kbd> افزودن قلم</span>
+      </div>
+    </div>
+
+    <!-- مالیات و جمع -->
+    <div class="card" id="card-sums">
+      <div class="card-head">
+        <span class="card-ico"><span class="ic" data-ico="percent"></span></span>
+        <span class="card-title">تخفیف، مالیات و جمع‌بندی</span>
+      </div>
+
+      <div class="vat-row">
+        <label class="switch">
+          <input type="checkbox" id="f-gdisc-en" data-bind="globalDiscount.enabled">
+          <span class="sw-track"></span>
+          <span class="sw-text">
+            <b>تخفیف کلی روی فاکتور</b>
+            <span>کسر درصدی از جمع کل فاکتور</span>
+          </span>
+        </label>
+        <div class="rate-wrap" id="gdiscWrap">
+          <input class="inp" id="f-gdisc" data-bind="globalDiscount.rate" data-float min="0" max="100" inputmode="decimal" aria-label="درصد تخفیف کلی">
+          <span>٪</span>
+        </div>
+      </div>
+
+      <div class="vat-row">
+        <label class="switch">
+          <input type="checkbox" id="f-vat" data-bind="vat.enabled">
+          <span class="sw-track"></span>
+          <span class="sw-text">
+            <b>مالیات بر ارزش افزوده</b>
+            <span>محاسبه خودکار روی مبلغ نهایی</span>
+          </span>
+        </label>
+        <div class="rate-wrap" id="rateWrap">
+          <input class="inp" id="f-rate" data-bind="vat.rate" data-int min="0" max="100" inputmode="numeric" aria-label="نرخ مالیات (درصد)">
+          <span>٪</span>
+        </div>
+      </div>
+
+      <div class="sum-table">
+        <div class="sum-row"><span>جمع کل اقلام</span><b><span id="sumTotal">۰</span> <small data-cur>ریال</small></b></div>
+        <div class="sum-row minus only-official" id="sumDiscRow"><span>تخفیف اقلام</span><b><span id="sumDisc">۰</span> <small data-cur>ریال</small></b></div>
+        <div class="sum-row minus" id="sumGlobalDiscRow" hidden><span>تخفیف کلی (<span id="sumGlobalDiscPct">۰</span>٪)</span><b><span id="sumGlobalDisc">۰</span> <small data-cur>ریال</small></b></div>
+        <div class="sum-row" id="sumNetRow"><span>مبلغ پس از تخفیف</span><b><span id="sumNet">۰</span> <small data-cur>ریال</small></b></div>
+        <div class="sum-row" id="sumTaxRow"><span>مالیات و عوارض (<span id="sumRate">۱۰</span>٪)</span><b><span id="sumTax">۰</span> <small data-cur>ریال</small></b></div>
+      </div>
+      <div class="sum-grand" id="sumGrandBox">
+        <span>مبلغ قابل پرداخت</span>
+        <b><span id="sumGrand">۰</span><small data-cur>ریال</small></b>
+      </div>
+    </div>
+
+    <!-- توضیحات -->
+    <div class="card" id="card-notes">
+      <div class="card-head">
+        <span class="card-ico"><span class="ic" data-ico="note"></span></span>
+        <span class="card-title">توضیحات</span>
+      </div>
+      <div class="field">
+        <label class="lbl" for="f-notes">متن پایین فاکتور <small>(اختیاری — در صورت خالی بودن نمایش داده نمی‌شود)</small></label>
+        <textarea class="txa" id="f-notes" data-bind="notes" rows="3" placeholder="مثلاً: تسویه تا ۷ روز کاری پس از تحویل کالا. هزینه ارسال بر عهده خریدار است."></textarea>
+      </div>
+    </div>
+
+    <div class="editor-foot">
+      <span class="save-dot" id="saveDot"></span>
+      <span id="saveState">اطلاعات فقط در مرورگر همین دستگاه ذخیره می‌شود — بدون نیاز به حساب کاربری</span>
+    </div>
+  </section>
+
+  <!-- ================= Preview ================= -->
+  <section class="preview" id="panePrev" aria-label="پیش‌نمایش فاکتور">
+    <div class="toolbar">
+      <span class="live"><span class="live-dot"></span><span>پیش‌نمایش زنده</span></span>
+      <span class="badge" id="typeBadge">عمودی · ساده</span>
+      <span class="badge dim" id="dimBadge"><span class="en">A4</span> · ۲۱۰×۲۹۷ میلی‌متر</span>
+      <span class="chip-warn" id="warnChip" hidden><span class="ic" data-ico="alert" data-s="13"></span><span id="warnText"></span></span>
+      <div class="zoom">
+        <button type="button" class="iconbtn fit-btn on" id="zoomFit" data-action="zoom-fit" title="اندازه متناسب با صفحه">
+          <span class="ic" data-ico="fit" data-s="14"></span>متناسب
+        </button>
+        <button type="button" class="iconbtn" data-action="zoom-out" title="کوچک‌نمایی" aria-label="کوچک‌نمایی"><span class="ic" data-ico="zout" data-s="15"></span></button>
+        <span class="zoom-val" id="zoomVal">۱۰۰٪</span>
+        <button type="button" class="iconbtn" data-action="zoom-in" title="بزرگ‌نمایی" aria-label="بزرگ‌نمایی"><span class="ic" data-ico="zin" data-s="15"></span></button>
+      </div>
+    </div>
+    <div class="scroller" id="scroller">
+      <div class="sheet-wrap" id="sheetWrap">
+        <div class="sheet-shadow"></div>
+        <div class="sheet s-simple" id="sheet" title="دوبار کلیک: بزرگ‌نمایی"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= Mobile bottom bar ================= -->
+<div class="bottombar" id="bottombar">
+  <div class="bar-amount">
+    <span>مبلغ قابل پرداخت</span>
+    <b><span id="barGrand">۰</span> <small data-cur>ریال</small></b>
+  </div>
+  <button type="button" class="btn btn-outline bar-png" data-action="export-png" data-export="png" aria-label="خروجی PNG" title="خروجی PNG">
+    <span class="ic" data-ico="image"></span>
+  </button>
+  <button type="button" class="btn btn-primary bar-pdf" data-action="export-pdf" data-export="pdf">
+    <span class="ic" data-ico="download"></span>دانلود <span class="en">PDF</span>
+  </button>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<!-- ================= Modal ================= -->
+<div class="modal-overlay" id="modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <div class="modal-ico"><span class="ic" data-ico="alert" data-s="22"></span></div>
+    <h3 id="mTitle">شروع فاکتور جدید؟</h3>
+    <p>همه اطلاعات فاکتور فعلی پاک می‌شود و شماره فاکتور یکی جلو می‌رود. تا چند ثانیه پس از پاک کردن، امکان بازگردانی دارید.</p>
+    <div class="modal-btns">
+      <button type="button" class="btn btn-outline" id="mCancel" data-action="modal-cancel">انصراف</button>
+      <button type="button" class="btn btn-danger" id="mOk" data-action="modal-ok"><span class="ic" data-ico="rotate" data-s="15"></span>پاک کردن و شروع</button>
+    </div>
+  </div>
+</div>
+
+<noscript><div style="padding:100px 20px;text-align:center;font-family:Tahoma">برای استفاده از فاکتورساز، جاوااسکریپت مرورگر را فعال کنید.</div></noscript>
+
+<script>
+'use strict';
+/* ================================================================
+   فاکتورساز — Single-file invoice builder (A4 · PDF/PNG · Vazirmatn)
+   ================================================================ */
+
+/* ---------- Helpers ---------- */
+const $  = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const FA = '۰۱۲۳۴۵۶۷۸۹';
+const AR = '٠١٢٣٤٥٦٧٨٩';
+const toEn = s => String(s ?? '').replace(/[۰-۹]/g, d => FA.indexOf(d)).replace(/[٠-٩]/g, d => AR.indexOf(d));
+const faDigits = s => String(s ?? '').replace(/\d/g, d => FA[d]);
+const nf    = new Intl.NumberFormat('fa-IR');
+const nfQty = new Intl.NumberFormat('fa-IR', { maximumFractionDigits: 3 });
+const money = n => nf.format(Math.round(n || 0));
+const faQty = n => nfQty.format(n || 0);
+const clamp = (n, a, b) => Math.min(Math.max(n, a), b);
+const pad2  = n => String(n).padStart(2, '0');
+const esc   = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const txt   = s => { const t = String(s ?? '').trim(); return t ? esc(t) : ''; };
+const uid   = () => (crypto.randomUUID ? crypto.randomUUID() : 'i' + Date.now() + Math.random().toString(36).slice(2, 8));
+const clone = o => (typeof structuredClone === 'function' ? structuredClone(o) : JSON.parse(JSON.stringify(o)));
+const groupRaw = raw => String(raw ?? '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+const parseNum = v => {
+  const t = toEn(String(v ?? '')).replace(/[،,٬\s]/g, '').replace(/٫/g, '.');
+  const n = parseFloat(t);
+  return isFinite(n) ? n : 0;
+};
+const getPath = (o, p) => p.split('.').reduce((a, k) => (a == null ? a : a[k]), o);
+const setPath = (o, p, v) => { const ks = p.split('.'); const last = ks.pop(); ks.reduce((a, k) => a[k], o)[last] = v; };
+
+/* ---------- Icons ---------- */
+const ICO = {
+  pen:'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  trash:'<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/>',
+  up:'<path d="M12 19V5M5 12l7-7 7 7"/>',
+  down:'<path d="M12 5v14M19 12l-7 7-7-7"/>',
+  download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+  file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M9 13h6M9 17h6"/>',
+  image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
+  rotate:'<path d="M1 4v6h6"/><path d="M3.5 15a9 9 0 1 0 2-9.4L1 10"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  alert:'<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/>',
+  store:'<path d="m3 9 1.5-5h15L21 9M4 9v11h16V9M9 20v-6h6v6M3 9h18"/>',
+  user:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  box:'<path d="m21 8-9-5-9 5v8l9 5 9-5Z"/><path d="m3 8 9 5 9-5M12 13v8"/>',
+  percent:'<path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',
+  note:'<path d="M15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10l6-6V5a2 2 0 0 0-2-2Z"/><path d="M15 21v-6h6"/>',
+  hash:'<path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/>',
+  zin:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/>',
+  zout:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3M8 11h6"/>',
+  fit:'<path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M16 21h3a2 2 0 0 0 2-2v-3M8 21H5a2 2 0 0 1-2-2v-3"/>',
+  info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>'
+};
+const icon = (n, s=18) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[n]||''}</svg>`;
+
+/* ---------- Constants ---------- */
+const A4P = { w: 794, h: 1123 };            // A4 portrait  @96dpi
+const A4L = { w: 1123, h: 794 };            // A4 landscape @96dpi
+const UNITS = ['عدد','بسته','جعبه','دستگاه','کیلوگرم','گرم','متر','لیتر','ساعت','سرویس'];
+const MONTHS = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const KEY = 'factoraaz.v3';
+
+/* ---------- Jalali date ---------- */
+function jToday(){
+  try{
+    const parts = new Intl.DateTimeFormat('en-US-u-ca-persian', { year:'numeric', month:'numeric', day:'numeric' }).formatToParts(new Date());
+    const g = t => parseInt(parts.find(p => p.type === t).value, 10);
+    return { y: g('year'), m: g('month'), d: g('day') };
+  }catch(e){ return { y: 1405, m: 9, d: 3 }; }
+}
+const daysInMonth = m => (m <= 6 ? 31 : 30);
+const dateStr = meta => `${faDigits(meta.date.y)}/${faDigits(pad2(meta.date.m))}/${faDigits(pad2(meta.date.d))}`;
+
+/* ---------- Persian number-to-words ---------- */
+const W_YEK  = ['','یک','دو','سه','چهار','پنج','شش','هفت','هشت','نه'];
+const W_DAH  = ['','','بیست','سی','چهل','پنجاه','شصت','هفتاد','هشتاد','نود'];
+const W_SAD  = ['','صد','دویست','سیصد','چهارصد','پانصد','ششصد','هفتصد','هشتصد','نهصد'];
+const W_TEEN = ['ده','یازده','دوازده','سیزده','چهارده','پانزده','شانزده','هفده','هجده','نوزده'];
+const W_SCALE= ['','هزار','میلیون','میلیارد','تریلیون'];
+function wThree(n){
+  const parts = [];
+  const h = Math.floor(n / 100), r = n % 100;
+  if (h) parts.push(W_SAD[h]);
+  if (r >= 10 && r < 20) parts.push(W_TEEN[r - 10]);
+  else {
+    const t = Math.floor(r / 10), o = r % 10;
+    if (t) parts.push(W_DAH[t]);
+    if (o) parts.push(W_YEK[o]);
+  }
+  return parts.join(' و ');
+}
+function words(num){
+  num = Math.round(Math.abs(num || 0));
+  if (num === 0) return 'صفر';
+  if (num >= 1e15) return money(num);
+  const groups = [];
+  while (num > 0){ groups.push(num % 1000); num = Math.floor(num / 1000); }
+  const parts = [];
+  for (let i = groups.length - 1; i >= 0; i--){
+    if (!groups[i]) continue;
+    let w = wThree(groups[i]);
+    if (W_SCALE[i]) w += ' ' + W_SCALE[i];
+    parts.push(w);
+  }
+  return parts.join(' و ');
+}
+
+/* ---------- State ---------- */
+const emptyParty = () => ({ name:'', phone:'', econ:'', reg:'', postal:'', city:'', address:'' });
+const blankItem  = () => ({ id: uid(), code:'', desc:'', unit:'عدد', qty:'1', price:'', discount:'' });
+function freshState(prev){
+  const nextNum = prev && prev.meta.number ? String((parseInt(toEn(prev.meta.number), 10) || 1000) + 1) : '';
+  return {
+    docKind: prev ? prev.docKind : 'sale',
+    type: prev ? prev.type : 'simple',
+    currency: prev ? prev.currency : 'rial',
+    vat: prev ? { ...prev.vat } : { enabled: false, rate: 10 },
+    globalDiscount: prev ? { ...prev.globalDiscount } : { enabled: false, rate: 5 },
+    meta: { number: nextNum, serial:'', date: jToday(), payment:'نقدی' },
+    seller: emptyParty(), buyer: emptyParty(),
+    items: [blankItem()], notes:'',
+    tab:'edit', zoom:null
+  };
+}
+function seedState(prev){
+  const s = freshState(prev);
+  s.vat = { enabled: true, rate: 10 };
+  s.globalDiscount = { enabled: true, rate: 5 };
+  s.meta = { number:'1041', serial:'246810', date: jToday(), payment:'غیرنقدی' };
+  s.seller = { name:'شرکت تجارت آوان پارس', phone:'021-88776655', econ:'14003345678', reg:'548761', postal:'1587634521', city:'تهران / تهران', address:'تهران، خیابان ولیعصر، بالاتر از میدان ونک، کوچه نگار، پلاک ۱۲، واحد ۴' };
+  s.buyer  = { name:'فروشگاه لوازم اداری البرز', phone:'026-34455667', econ:'14005567890', reg:'', postal:'3154887612', city:'البرز / کرج', address:'کرج، خیابان طالقانی، نبش کوچه مهر، پلاک ۸۶' };
+  s.items = [
+    { id:uid(), code:'A4-80', desc:'کاغذ A4 بسته ۵۰۰ برگ — برند کپی‌مکس', unit:'بسته', qty:'12', price:'1850000', discount:'600000' },
+    { id:uid(), code:'PN-01', desc:'خودکار آبی پنتر مدل کلاسیک (جعبه ۵۰ عددی)', unit:'جعبه', qty:'4', price:'4200000', discount:'0' },
+    { id:uid(), code:'FL-22', desc:'زونکن اداری سایز A4 عطف ۸ سانتی‌متر', unit:'عدد', qty:'20', price:'950000', discount:'1000000' },
+    { id:uid(), code:'ST-09', desc:'منگنه رومیزی و منگنه‌کش اداری — استاپ', unit:'دستگاه', qty:'6', price:'1450000', discount:'0' },
+    { id:uid(), code:'TN-33', desc:'کارتریج شارژ مشکی HP 85A با گارانتی تعویض', unit:'عدد', qty:'3', price:'8900000', discount:'1500000' }
+  ];
+  s.notes = 'تسویه تا ۷ روز کاری پس از تحویل کالا. هزینه ارسال بر عهده خریدار است. کالای فروخته‌شده تا ۴۸ ساعت در صورت مغایرت قابل مرجوع است.';
+  return s;
+}
+let state;
+function loadState(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return null;
+    const o = JSON.parse(raw);
+    if (!o || !Array.isArray(o.items) || !o.seller || !o.meta) return null;
+    const base = freshState();
+    return {
+      ...base, ...o,
+      docKind: o.docKind === 'proforma' ? 'proforma' : 'sale',
+      type: o.type === 'official' ? 'official' : 'simple',
+      currency: o.currency === 'toman' ? 'toman' : 'rial',
+      vat: { ...base.vat, ...(o.vat || {}) },
+      globalDiscount: { ...base.globalDiscount, ...(typeof o.globalDiscount === 'object' ? o.globalDiscount : {}) },
+      meta: { ...base.meta, ...(o.meta || {}), date: { ...base.meta.date, ...((o.meta || {}).date || {}) } },
+      seller: { ...emptyParty(), ...o.seller },
+      buyer:  { ...emptyParty(), ...o.buyer },
+      items: o.items.map(it => ({ ...blankItem(), ...it, id: it.id || uid() })),
+      tab:'edit', zoom:null
+    };
+  }catch(e){ return null; }
+}
+state = loadState() || freshState();
+
+/* ---------- Money math ---------- */
+function computeTotals(){
+  const official = state.type === 'official';
+  const vatOn = !!state.vat.enabled;
+  const rate = clamp(parseNum(state.vat.rate), 0, 100);
+  const gDiscOn = !!state.globalDiscount.enabled;
+  const gDiscPct = gDiscOn ? clamp(parseNum(state.globalDiscount.rate), 0, 100) : 0;
+
+  const rows = state.items.map(it => {
+    const qty   = Math.max(parseNum(it.qty), 0);
+    const price = Math.max(parseNum(it.price), 0);
+    const total = Math.round(qty * price);
+    const disc  = official ? clamp(Math.round(parseNum(it.discount)), 0, total) : 0;
+    const net   = total - disc;
+    const tax   = vatOn ? Math.round(net * rate / 100) : 0;
+    return { it, qty, price, total, disc, net, tax, final: net + tax };
+  });
+
+  const sum = k => rows.reduce((a, r) => a + r[k], 0);
+  const sumTotal = sum('total');
+  const sumDisc  = sum('disc');
+  const afterRowDisc = sum('net');
+  const gDiscAmt = gDiscOn && gDiscPct > 0 ? Math.round(afterRowDisc * gDiscPct / 100) : 0;
+  const sumNet   = Math.max(0, afterRowDisc - gDiscAmt);
+  const sumTax   = vatOn ? Math.round(sumNet * rate / 100) : 0;
+  const grand    = sumNet + sumTax;
+
+  return {
+    rows, official, vatOn, rate, gDiscOn, gDiscPct, gDiscAmt,
+    sumQty: rows.reduce((a, r) => a + r.qty, 0),
+    sumTotal, sumDisc, sumNet, sumTax, grand
+  };
+}
+const curWord = () => (state.currency === 'rial' ? 'ریال' : 'تومان');
+
+/* ================================================================
+   SHEET BUILDERS (Formal B&W)
+   ================================================================ */
+function partySimple(party, role){
+  const tel = String(party.phone || '').trim();
+  return `<div class="party">
+    <span class="p-role">مشخصات ${role}</span>
+    <b class="p-name">${txt(party.name)}</b>
+    <span class="p-tel">تلفن تماس: ${tel ? `<bdi dir="ltr">${faDigits(esc(tel))}</bdi>` : ''}</span>
+  </div>`;
+}
+function buildSimple(t){
+  const cur = curWord();
+  const docTitle = state.docKind === 'proforma' ? 'پیش‌فاکتور فروش' : 'فاکتور فروش';
+  const numLabel = state.docKind === 'proforma' ? 'شماره پیش‌فاکتور:' : 'شماره فاکتور:';
+
+  const body = t.rows.length ? t.rows.map((r, i) => `<tr>
+      <td class="num">${faDigits(i + 1)}</td>
+      <td class="desc-cell">${txt(r.it.desc)}</td>
+      <td class="num">${faQty(r.qty)}</td>
+      <td class="num">${money(r.price)}</td>
+      <td class="num strong">${money(r.total)}</td>
+    </tr>`).join('')
+    : `<tr class="empty-row"><td colspan="5">قلمی ثبت نشده است</td></tr>`;
+
+  const notes = String(state.notes || '').trim();
+  const notesBlock = notes ? `
+    <div class="ss-notes">
+      <span class="notes-label">توضیحات:</span>
+      <div class="notes-text">${esc(notes)}</div>
+    </div>` : '';
+
+  const hasDiscount = t.gDiscOn && t.gDiscPct > 0;
+
+  return `
+  <div class="ss-frame">
+    <div class="ss-head">
+      <div>
+        <div class="ss-title">${docTitle}</div>
+      </div>
+      <div class="ss-meta">
+        <div class="meta-row"><span>${numLabel}</span><b>${state.meta.number ? faDigits(esc(state.meta.number)) : ''}</b></div>
+        <div class="meta-row"><span>تاریخ صدور:</span><b>${dateStr(state.meta)}</b></div>
+      </div>
+    </div>
+    <div class="ss-parties">
+      ${partySimple(state.seller, 'فروشنده')}
+      ${partySimple(state.buyer, 'خریدار')}
+    </div>
+    <div class="tbl-fit"><div class="tbl-fit-in">
+      <table class="tbl">
+        <colgroup><col style="width:7%"><col style="width:45%"><col style="width:10%"><col style="width:18%"><col style="width:20%"></colgroup>
+        <thead><tr><th>ردیف</th><th style="text-align:right;padding-right:10px">شرح کالا یا خدمات</th><th>تعداد</th><th>مبلغ واحد (${cur})</th><th>مبلغ کل (${cur})</th></tr></thead>
+        <tbody>${body}</tbody>
+        <tfoot><tr><td colspan="4" style="text-align:right;padding-right:10px">جمع کل اقلام</td><td class="num">${money(t.sumTotal)}</td></tr></tfoot>
+      </table>
+    </div></div>
+    <div class="ss-after">
+      <div class="ss-summary-row">
+        ${notesBlock}
+        <div class="totals-box ss-totals${notes ? '' : ' full-w'}">
+          <div class="t-row"><span>جمع کل اقلام</span><b>${money(t.sumTotal)}</b></div>
+          ${hasDiscount ? `<div class="t-row"><span>تخفیف کلی (${faDigits(t.gDiscPct)}٪)</span><b>${money(t.gDiscAmt)}</b></div>` : ''}
+          ${hasDiscount ? `<div class="t-row"><span>مبلغ پس از تخفیف</span><b>${money(t.sumNet)}</b></div>` : ''}
+          ${t.vatOn ? `<div class="t-row"><span>مالیات و عوارض (${faDigits(t.rate)}٪)</span><b>${money(t.sumTax)}</b></div>` : ''}
+          <div class="t-grand">
+            <div class="t-grand-left">
+              <span>مبلغ قابل پرداخت</span>
+              <div class="t-grand-words">به حروف: ${words(t.grand)} ${cur}</div>
+            </div>
+            <b class="t-grand-num">${money(t.grand)}<small>${cur}</small></b>
+          </div>
+        </div>
+      </div>
+      <div class="ss-signs">
+        <div class="sign-box">مهر و امضای فروشنده</div>
+        <div class="sign-box">مهر و امضای خریدار</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function ofPartyBlock(party, title){
+  const ltr = v => { const s = String(v || '').trim(); return s ? `<bdi dir="ltr">${faDigits(esc(s))}</bdi>` : ''; };
+  const addrParts = [txt(party.city), txt(party.address)].filter(Boolean).join(' - ');
+  return `<div class="of-party">
+    <div class="ofp-title">${title}</div>
+    <div class="ofp-grid">
+      <div class="ofp-item name-item full"><span>نام شخص حقیقی / حقوقی:</span><b>${txt(party.name)}</b></div>
+      <div class="ofp-item"><span>شماره اقتصادی / شناسه ملی:</span><b>${ltr(party.econ)}</b></div>
+      <div class="ofp-item"><span>شماره ثبت / ملی:</span><b>${ltr(party.reg)}</b></div>
+      <div class="ofp-item"><span>کد پستی ۱۰ رقمی:</span><b>${ltr(party.postal)}</b></div>
+      <div class="ofp-item"><span>تلفن / نمابر:</span><b>${ltr(party.phone)}</b></div>
+      <div class="ofp-item full"><span>نشانی:</span><b>${addrParts}</b></div>
+    </div>
+  </div>`;
+}
+function buildOfficial(t){
+  const cur = curWord();
+  const docTitle = state.docKind === 'proforma' ? 'پیش‌صورتحساب فروش کالا و خدمات' : 'صورتحساب فروش کالا و خدمات';
+  const numLabel = state.docKind === 'proforma' ? 'شماره پیش‌فاکتور:' : 'شماره صورتحساب:';
+
+  const body = t.rows.length ? t.rows.map((r, i) => `<tr>
+      <td class="num">${faDigits(i + 1)}</td>
+      <td class="num">${txt(r.it.code)}</td>
+      <td class="desc-cell">${txt(r.it.desc)}</td>
+      <td class="num">${esc(r.it.unit || '')}</td>
+      <td class="num">${faQty(r.qty)}</td>
+      <td class="num">${money(r.price)}</td>
+      <td class="num">${money(r.total)}</td>
+      <td class="num ${r.disc ? 'minus' : 'dim'}">${money(r.disc)}</td>
+      <td class="num">${money(r.net)}</td>
+      <td class="num">${money(r.tax)}</td>
+      <td class="num strong">${money(r.final)}</td>
+    </tr>`).join('')
+    : `<tr class="empty-row"><td colspan="11">قلمی ثبت نشده است</td></tr>`;
+
+  const notes = String(state.notes || '').trim();
+  const notesBlock = notes ? `
+    <div class="of-notes">
+      <span class="notes-label">توضیحات و شرایط معامله:</span>
+      <div class="notes-text">${esc(notes)}</div>
+    </div>` : '';
+
+  const rowTaxSum = t.rows.reduce((a, r) => a + r.tax, 0);
+  const rowFinalSum = t.rows.reduce((a, r) => a + r.final, 0);
+  const hasGlobalDisc = t.gDiscOn && t.gDiscPct > 0;
+
+  return `
+  <div class="oframe"><div class="oframe-in">
+    <div class="of-top-bar">
+      <div></div>
+      <div>
+        <div class="of-title">${docTitle}</div>
+        <div class="of-subtitle">واحد پول: ${cur}</div>
+      </div>
+      <div class="of-meta-box">
+        <div><span>${numLabel}</span><b>${state.meta.number ? faDigits(esc(state.meta.number)) : ''}</b></div>
+        <div><span>شماره سریال:</span><b>${state.meta.serial ? faDigits(esc(state.meta.serial)) : ''}</b></div>
+        <div><span>تاریخ صدور:</span><b>${dateStr(state.meta)}</b></div>
+        <div><span>نحوه تسویه:</span><b>${esc(state.meta.payment || 'نقدی')}</b></div>
+      </div>
+    </div>
+
+    <div class="of-parties">
+      ${ofPartyBlock(state.seller, 'مشخصات فروشنده')}
+      ${ofPartyBlock(state.buyer, 'مشخصات خریدار')}
+    </div>
+
+    <div class="tbl-fit"><div class="tbl-fit-in">
+      <table class="tbl">
+        <colgroup><col style="width:3%"><col style="width:6%"><col style="width:26%"><col style="width:5%"><col style="width:5%"><col style="width:8%"><col style="width:9%"><col style="width:7%"><col style="width:9%"><col style="width:8%"><col style="width:14%"></colgroup>
+        <thead><tr>
+          <th>ردیف</th><th>کد کالا</th><th style="text-align:right;padding-right:7px">شرح کالا یا خدمات</th><th>واحد</th><th>تعداد</th>
+          <th>مبلغ واحد (${cur})</th><th>مبلغ کل (${cur})</th><th>تخفیف (${cur})</th><th>مبلغ پس از تخفیف (${cur})</th><th>مالیات و عوارض (${cur})</th><th>جمع کل (${cur})</th>
+        </tr></thead>
+        <tbody>${body}</tbody>
+        <tfoot><tr>
+          <td colspan="3" style="text-align:right;padding-right:7px">جمع کل اقلام</td>
+          <td class="num">—</td><td class="num">${faQty(t.sumQty)}</td><td class="num">—</td>
+          <td class="num">${money(t.sumTotal)}</td><td class="num">${money(t.sumDisc)}</td>
+          <td class="num">${money(t.sumTotal - t.sumDisc)}</td><td class="num">${money(rowTaxSum)}</td><td class="num">${money(rowFinalSum)}</td>
+        </tr></tfoot>
+      </table>
+    </div></div>
+
+    <div class="of-after">
+      <div class="of-summary-row">
+        ${notesBlock}
+        <div class="totals-box of-totals${notes ? '' : ' full-w'}">
+          <div class="t-row"><span>جمع کل اقلام</span><b>${money(t.sumTotal)}</b></div>
+          ${t.sumDisc > 0 ? `<div class="t-row"><span>تخفیف اقلام</span><b>${money(t.sumDisc)}</b></div>` : ''}
+          ${hasGlobalDisc ? `<div class="t-row"><span>تخفیف کلی (${faDigits(t.gDiscPct)}٪)</span><b>${money(t.gDiscAmt)}</b></div>` : ''}
+          <div class="t-row"><span>مبلغ خالص پس از تخفیف</span><b>${money(t.sumNet)}</b></div>
+          ${t.vatOn ? `<div class="t-row"><span>مالیات و عوارض ارزش افزوده (${faDigits(t.rate)}٪)</span><b>${money(t.sumTax)}</b></div>` : ''}
+          <div class="t-grand">
+            <div class="t-grand-left">
+              <span>مبلغ قابل پرداخت</span>
+              <div class="t-grand-words">به حروف: ${words(t.grand)} ${cur}</div>
+            </div>
+            <b class="t-grand-num">${money(t.grand)}<small>${cur}</small></b>
+          </div>
+        </div>
+      </div>
+
+      <div class="of-signs">
+        <div class="sign-box">مهر و امضای فروشنده</div>
+        <div class="sign-box">مهر و امضای خریدار</div>
+      </div>
+    </div>
+  </div></div>`;
+}
+const buildSheet = t => (state.type === 'official' ? buildOfficial(t) : buildSimple(t));
+const sheetDims  = () => (state.type === 'official' ? A4L : A4P);
+const sheetClass = () => (state.type === 'official' ? 's-official' : 's-simple');
+
+/* ---------- Fit table & half-A4 check ---------- */
+function fitSheet(root){
+  const fit = root.querySelector('.tbl-fit');
+  const inner = root.querySelector('.tbl-fit-in');
+  if (!fit || !inner) return;
+  inner.style.transform = 'none';
+  inner.style.width = '100%';
+  fit.style.maxHeight = 'none';
+
+  const isOfficial = state.type === 'official';
+  const P = sheetDims();
+  const cs = getComputedStyle(root);
+  const padV = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+  const maxInnerH = P.h - padV;
+
+  const box = root.firstElementChild;
+  if (!box) return;
+
+  // In landscape official mode, if total content fits comfortably within half A4 height (~385px), keep it half-page!
+  const halfTarget = Math.floor(P.h / 2) - 8;
+  if (isOfficial && box.offsetHeight <= halfTarget){
+    return;
+  }
+
+  // Otherwise ensure it fits within full A4 page height
+  if (box.offsetHeight > maxInnerH){
+    const otherH = box.offsetHeight - inner.offsetHeight;
+    const avail = Math.max(80, maxInnerH - otherH);
+    const need = inner.offsetHeight;
+    if (need > avail){
+      const s = Math.max(avail / need, 0.42);
+      inner.style.width = (100 / s) + '%';
+      inner.style.transform = `scale(${s})`;
+      fit.style.height = Math.round(need * s) + 'px';
+    }
+  }
+}
+
+/* ================================================================
+   RENDERING
+   ================================================================ */
+const sheetEl = $('#sheet'), wrapEl = $('#sheetWrap'), scroller = $('#scroller');
+let lastFit = 1, lastGrand = null, rafPending = false;
+
+function applyScale(){
+  const P = sheetDims();
+  const cs = getComputedStyle(scroller);
+  const availW = scroller.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  lastFit = Math.min(Math.max(availW, 100) / P.w, 1);
+  const s = state.zoom == null ? lastFit : state.zoom;
+  wrapEl.style.width  = Math.round(P.w * s) + 'px';
+  wrapEl.style.height = Math.round(P.h * s) + 'px';
+  sheetEl.style.transform = `scale(${s})`;
+  $('#zoomVal').textContent = faDigits(Math.round(s * 100)) + '٪';
+  $('#zoomFit').classList.toggle('on', state.zoom == null);
+}
+function renderSheet(){
+  const t = computeTotals();
+  const P = sheetDims();
+  sheetEl.style.width = P.w + 'px';
+  sheetEl.style.height = P.h + 'px';
+  sheetEl.className = 'sheet ' + sheetClass();
+  sheetEl.innerHTML = buildSheet(t);
+  const kindTxt = state.docKind === 'proforma' ? 'پیش‌فاکتور' : 'فاکتور';
+  $('#typeBadge').textContent = state.type === 'official' ? `${kindTxt} افقی · رسمی` : `${kindTxt} عمودی · ساده`;
+  $('#dimBadge').innerHTML = state.type === 'official'
+    ? '<span class="en">A4</span> · ۲۹۷×۲۱۰ میلی‌متر'
+    : '<span class="en">A4</span> · ۲۱۰×۲۹۷ میلی‌متر';
+  requestAnimationFrame(() => { fitSheet(sheetEl); applyScale(); });
+}
+function renderTotals(){
+  const t = computeTotals();
+  $('#sumTotal').textContent = money(t.sumTotal);
+  $('#sumDisc').textContent  = money(t.sumDisc);
+
+  const gRow = $('#sumGlobalDiscRow');
+  if (t.gDiscOn && t.gDiscPct > 0){
+    gRow.hidden = false;
+    $('#sumGlobalDiscPct').textContent = faDigits(t.gDiscPct);
+    $('#sumGlobalDisc').textContent = money(t.gDiscAmt);
+  } else {
+    gRow.hidden = true;
+  }
+
+  $('#sumNet').textContent   = money(t.sumNet);
+  $('#sumTax').textContent   = money(t.sumTax);
+  $('#sumRate').textContent  = faDigits(t.rate);
+  $('#sumTaxRow').hidden = !t.vatOn;
+  const g = money(t.grand);
+  $('#sumGrand').textContent = g;
+  $('#barGrand').textContent = g;
+  if (lastGrand !== null && lastGrand !== t.grand){
+    const box = $('#sumGrandBox');
+    box.classList.remove('flash'); void box.offsetWidth; box.classList.add('flash');
+  }
+  lastGrand = t.grand;
+  t.rows.forEach(r => {
+    const net = $(`[data-net="${r.it.id}"]`);
+    if (net) net.textContent = t.official
+      ? `پس از تخفیف: ${money(r.net)} ${curWord()}`
+      : `جمع قلم: ${money(r.total)} ${curWord()}`;
+    const mini = $(`[data-taxmini="${r.it.id}"]`);
+    if (mini) mini.textContent = (t.official && t.vatOn)
+      ? `مالیات: ${money(r.tax)} • جمع نهایی: ${money(r.final)} ${curWord()}` : '';
+  });
+  $('#itemCount').textContent = faDigits(state.items.length) + ' قلم';
+  const warns = [];
+  if (!state.items.length) warns.push('هیچ قلمی ثبت نشده');
+  if (!String(state.seller.name).trim()) warns.push('نام فروشنده خالی است');
+  if (!String(state.buyer.name).trim()) warns.push('نام خریدار خالی است');
+  $('#warnChip').hidden = !warns.length;
+  $('#warnText').textContent = warns[0] || '';
+  $('#warnChip').title = warns.join(' • ');
+}
+function unitOptions(sel){
+  const list = UNITS.includes(sel) ? UNITS : [sel, ...UNITS];
+  return list.map(u => `<option value="${esc(u)}"${u === sel ? ' selected' : ''}>${esc(u)}</option>`).join('');
+}
+function itemHTML(it, i){
+  return `<div class="item" data-id="${it.id}">
+    <div class="item-top">
+      <span class="idx">${faDigits(i + 1)}</span>
+      <input class="inp" data-item="${it.id}" data-field="desc" value="${esc(it.desc)}" placeholder="شرح کالا یا خدمات…" autocomplete="off" aria-label="شرح قلم ${faDigits(i + 1)}">
+      <div class="item-tools">
+        <button type="button" class="iconbtn" data-action="move-up" data-id="${it.id}" title="انتقال به بالا" aria-label="انتقال قلم ${faDigits(i + 1)} به بالا"${i === 0 ? ' disabled' : ''}>${icon('up', 15)}</button>
+        <button type="button" class="iconbtn" data-action="move-down" data-id="${it.id}" title="انتقال به پایین" aria-label="انتقال قلم ${faDigits(i + 1)} به پایین"${i === state.items.length - 1 ? ' disabled' : ''}>${icon('down', 15)}</button>
+        <button type="button" class="iconbtn danger" data-action="del-item" data-id="${it.id}" title="حذف قلم" aria-label="حذف قلم ${faDigits(i + 1)}">${icon('trash', 15)}</button>
+      </div>
+    </div>
+    <div class="item-grid">
+      <div class="field">
+        <label class="lbl">تعداد</label>
+        <input class="inp num-in" data-item="${it.id}" data-field="qty" data-qty value="${esc(it.qty)}" inputmode="decimal" autocomplete="off" aria-label="تعداد قلم ${faDigits(i + 1)}">
+      </div>
+      <div class="field">
+        <label class="lbl">واحد</label>
+        <select class="sel" data-item="${it.id}" data-field="unit" aria-label="واحد قلم ${faDigits(i + 1)}">${unitOptions(it.unit)}</select>
+      </div>
+      <div class="field f-price">
+        <label class="lbl">مبلغ واحد <small>(<span data-cur>${curWord()}</span>)</small></label>
+        <input class="inp money" data-item="${it.id}" data-field="price" data-money value="${groupRaw(it.price)}" inputmode="numeric" autocomplete="off" placeholder="۱٬۸۵۰٬۰۰۰" aria-label="مبلغ واحد قلم ${faDigits(i + 1)}">
+      </div>
+      <div class="field f-code only-official">
+        <label class="lbl">کد کالا</label>
+        <input class="inp ltr" data-item="${it.id}" data-field="code" value="${esc(it.code)}" maxlength="12" autocomplete="off" placeholder="A4-80" aria-label="کد کالای قلم ${faDigits(i + 1)}">
+      </div>
+      <div class="field f-disc only-official">
+        <label class="lbl">تخفیف <small>(<span data-cur>${curWord()}</span>)</small></label>
+        <input class="inp money" data-item="${it.id}" data-field="discount" data-money value="${groupRaw(it.discount)}" inputmode="numeric" autocomplete="off" placeholder="۰" aria-label="تخفیف قلم ${faDigits(i + 1)}">
+      </div>
+    </div>
+    <div class="item-foot">
+      <span class="net-chip" data-net="${it.id}"></span>
+      <span class="tax-mini" data-taxmini="${it.id}"></span>
+    </div>
+  </div>`;
+}
+function renderItems(){
+  const list = $('#itemsList');
+  list.innerHTML = state.items.length
+    ? state.items.map(itemHTML).join('')
+    : `<div class="empty">
+        <span class="card-ico">${icon('box', 20)}</span>
+        <b>هنوز قلمی اضافه نشده است</b>
+        <span>اولین کالا یا خدمت فاکتور را ثبت کنید</span>
+      </div>`;
+  applyTypeHidden();
+}
+function applyTypeHidden(){
+  const official = state.type === 'official';
+  $$('.only-official').forEach(el => el.hidden = !official);
+  $$('.only-simple').forEach(el => el.hidden = official);
+}
+function updateCurLabels(){ $$('[data-cur]').forEach(el => el.textContent = curWord()); }
+function scheduleUpdate(){
+  if (rafPending) return;
+  rafPending = true;
+  requestAnimationFrame(() => {
+    rafPending = false;
+    renderSheet();
+    renderTotals();
+    saveSoon();
+  });
+}
+
+/* ---------- Persistence ---------- */
+let saveTimer = null, quotaWarned = false;
+function saveSoon(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try{
+      const { tab, zoom, ...persist } = state;
+      localStorage.setItem(KEY, JSON.stringify(persist));
+      const dot = $('#saveDot');
+      dot.classList.remove('pulse'); void dot.offsetWidth; dot.classList.add('pulse');
+    }catch(e){
+      if (!quotaWarned){ quotaWarned = true; toast('warn', 'ذخیره خودکار ممکن نیست؛ حافظه مرورگر پر است.'); }
+    }
+  }, 500);
+}
+
+/* ================================================================
+   EDITOR SYNC & INPUT HANDLING
+   ================================================================ */
+function renderDateOptions(){
+  const dd = $('#f-dd'), mm = $('#f-mm'), yy = $('#f-yy');
+  const max = daysInMonth(state.meta.date.m);
+  if (state.meta.date.d > max) state.meta.date.d = max;
+  dd.innerHTML = Array.from({ length: max }, (_, i) => `<option value="${i + 1}">${faDigits(i + 1)}</option>`).join('');
+  mm.innerHTML = MONTHS.map((m, i) => `<option value="${i + 1}">${m}</option>`).join('');
+  const jy = jToday().y;
+  yy.innerHTML = Array.from({ length: 6 }, (_, i) => jy - 3 + i).map(y => `<option value="${y}">${faDigits(y)}</option>`).join('');
+  dd.value = String(state.meta.date.d);
+  mm.value = String(state.meta.date.m);
+  yy.value = String(state.meta.date.y);
+}
+function syncEditor(){
+  renderDateOptions();
+  $$('[data-bind]').forEach(el => {
+    const v = getPath(state, el.dataset.bind);
+    if (el.type === 'checkbox') el.checked = !!v;
+    else if (el.type === 'radio') el.checked = (el.value === v);
+    else el.value = v ?? '';
+  });
+  $('#f-rate').disabled = !state.vat.enabled;
+  $('#rateWrap').classList.toggle('off', !state.vat.enabled);
+  $('#f-gdisc').disabled = !state.globalDiscount.enabled;
+  $('#gdiscWrap').classList.toggle('off', !state.globalDiscount.enabled);
+
+  $$('.kind-btn[data-action="dockind"]').forEach(b => {
+    const on = b.dataset.val === state.docKind;
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-pressed', on);
+  });
+
+  $('#tcSimple').classList.toggle('selected', state.type === 'simple');
+  $('#tcOfficial').classList.toggle('selected', state.type === 'official');
+  $$('.seg-btn[data-action="currency"]').forEach(b => {
+    const on = b.dataset.val === state.currency;
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-pressed', on);
+  });
+  applyTypeHidden();
+  updateCurLabels();
+  renderItems();
+  lastGrand = null;
+  renderSheet();
+  renderTotals();
+}
+function moneyInput(el){
+  const start = el.selectionStart ?? el.value.length;
+  let before = 0;
+  for (const ch of el.value.slice(0, start)) if (/[0-9۰-۹٠-٩]/.test(ch)) before++;
+  let raw = toEn(el.value).replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+  const val = groupRaw(raw);
+  el.value = val;
+  let pos = 0, cnt = 0;
+  while (pos < val.length && cnt < before){ if (/[0-9]/.test(val[pos])) cnt++; pos++; }
+  try{ el.setSelectionRange(pos, pos); }catch(e){}
+  return raw;
+}
+function floatInput(el, maxVal=null){
+  const p = el.selectionStart;
+  let v = toEn(el.value).replace(/٫/g, '.').replace(/[^0-9.]/g, '');
+  const i = v.indexOf('.');
+  if (i >= 0) v = v.slice(0, i + 1) + v.slice(i + 1).replace(/\./g, '');
+  if (maxVal !== null && parseFloat(v) > maxVal) v = String(maxVal);
+  el.value = v;
+  try{ el.setSelectionRange(Math.min(p, v.length), Math.min(p, v.length)); }catch(err){}
+  return v;
+}
+function handleInput(e){
+  const el = e.target;
+  if (el.dataset.item){
+    const it = state.items.find(x => x.id === el.dataset.item);
+    if (!it) return;
+    const f = el.dataset.field;
+    if (el.dataset.money !== undefined) it[f] = moneyInput(el);
+    else if (el.dataset.qty !== undefined) it.qty = floatInput(el);
+    else it[f] = el.value;
+    scheduleUpdate();
+    return;
+  }
+  const bind = el.dataset.bind;
+  if (!bind) return;
+  let v = el.type === 'checkbox' ? el.checked : el.value;
+  if (el.dataset.digits !== undefined){ el.value = toEn(el.value).replace(/[^\d]/g, ''); v = el.value; }
+  if (el.dataset.phone  !== undefined){ el.value = toEn(el.value).replace(/[^\d\-+]/g, ''); v = el.value; }
+  if (el.dataset.float  !== undefined){ v = floatInput(el, 100); }
+  if (el.dataset.int !== undefined){
+    v = clamp(parseInt(toEn(String(v)) || '0', 10), parseInt(el.min || '0', 10), parseInt(el.max || '9999', 10));
+    if (bind === 'vat.rate') el.value = v;
+  }
+  setPath(state, bind, v);
+  if (bind === 'type'){
+    $('#tcSimple').classList.toggle('selected', state.type === 'simple');
+    $('#tcOfficial').classList.toggle('selected', state.type === 'official');
+    applyTypeHidden();
+    wrapEl.classList.remove('pop'); void wrapEl.offsetWidth; wrapEl.classList.add('pop');
+    state.zoom = null;
+  }
+  if (bind === 'meta.date.m') renderDateOptions();
+  if (bind === 'vat.enabled'){
+    $('#f-rate').disabled = !v;
+    $('#rateWrap').classList.toggle('off', !v);
+  }
+  if (bind === 'globalDiscount.enabled'){
+    $('#f-gdisc').disabled = !v;
+    $('#gdiscWrap').classList.toggle('off', !v);
+  }
+  scheduleUpdate();
+}
+
+/* ---------- Item operations ---------- */
+function rememberFocus(){
+  const a = document.activeElement;
+  if (a && a.dataset && a.dataset.item) return { item: a.dataset.item, field: a.dataset.field };
+  return null;
+}
+function restoreFocus(f){
+  if (!f) return;
+  const el = $(`[data-item="${f.item}"][data-field="${f.field}"]`);
+  if (el){ el.focus(); if (el.setSelectionRange && el.type === 'text'){ const L = el.value.length; try{ el.setSelectionRange(L, L); }catch(e){} } }
+}
+function addItem(){
+  const it = blankItem();
+  state.items.push(it);
+  renderItems();
+  const card = $(`.item[data-id="${it.id}"]`);
+  if (card){ card.classList.add('enter'); card.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
+  const desc = $(`[data-item="${it.id}"][data-field="desc"]`);
+  if (desc) desc.focus();
+  scheduleUpdate();
+}
+function delItem(id){
+  const idx = state.items.findIndex(x => x.id === id);
+  if (idx < 0) return;
+  const snap = clone(state);
+  state.items.splice(idx, 1);
+  renderItems();
+  const next = state.items[Math.min(idx, state.items.length - 1)];
+  if (next){ const d = $(`[data-item="${next.id}"][data-field="desc"]`); if (d) d.focus(); }
+  scheduleUpdate();
+  toast('info', 'قلم از فاکتور حذف شد.', { label:'بازگردانی', fn: () => restoreSnapshot(snap) });
+}
+function moveItem(id, dir){
+  const idx = state.items.findIndex(x => x.id === id);
+  const to = idx + dir;
+  if (idx < 0 || to < 0 || to >= state.items.length) return;
+  const f = rememberFocus();
+  [state.items[idx], state.items[to]] = [state.items[to], state.items[idx]];
+  renderItems();
+  restoreFocus(f);
+  scheduleUpdate();
+}
+function restoreSnapshot(snap){
+  const tab = state.tab;
+  state = clone(snap);
+  state.tab = tab;
+  syncEditor();
+  saveSoon();
+  toast('success', 'اطلاعات بازگردانی شد.');
+}
+
+/* ================================================================
+   EXPORT — PNG / PDF on exact A4
+   ================================================================ */
+let exporting = false;
+function setBusy(on){
+  $$('[data-export]').forEach(btn => {
+    if (on){
+      if (!btn.dataset.orig) btn.dataset.orig = btn.innerHTML;
+      btn.classList.add('is-busy'); btn.disabled = true;
+      btn.innerHTML = `<span class="spin"></span>${btn.classList.contains('bar-png') ? '' : '<span>در حال ساخت…</span>'}`;
+    } else {
+      if (btn.dataset.orig) btn.innerHTML = btn.dataset.orig;
+      btn.classList.remove('is-busy'); btn.disabled = false;
+    }
+  });
+}
+function downloadBlob(blob, name){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+async function doExport(kind){
+  if (exporting) return;
+  if (!window.html2canvas){ toast('danger', 'کتابخانه خروجی بارگذاری نشده است؛ اتصال اینترنت را بررسی و صفحه را دوباره باز کنید.'); return; }
+  if (kind === 'pdf' && !(window.jspdf && window.jspdf.jsPDF)){ toast('danger', 'کتابخانه PDF بارگذاری نشده است؛ صفحه را دوباره باز کنید.'); return; }
+  exporting = true;
+  setBusy(true);
+  let holder = null;
+  try{
+    await document.fonts.ready;
+    const P = sheetDims();
+    holder = document.createElement('div');
+    holder.style.cssText = `position:fixed;top:0;left:-99999px;width:${P.w}px;height:${P.h}px;background:#ffffff;z-index:-1;`;
+    holder.innerHTML = `<div class="sheet ${sheetClass()}" style="position:relative;width:${P.w}px;height:${P.h}px">${buildSheet(computeTotals())}</div>`;
+    document.body.appendChild(holder);
+    const node = holder.firstElementChild;
+    fitSheet(node);
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const canvas = await window.html2canvas(node, {
+      scale: 3, backgroundColor: '#ffffff', logging: false, useCORS: true,
+      width: P.w, height: P.h
+    });
+    const prefix = state.docKind === 'proforma' ? 'پیش-فاکتور-' : 'فاکتور-';
+    const fname = prefix + (toEn(state.meta.number) || 'بدون-شماره');
+    if (kind === 'png'){
+      const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+      if (!blob) throw new Error('blob');
+      downloadBlob(blob, fname + '.png');
+    } else {
+      const { jsPDF } = window.jspdf;
+      const portrait = state.type !== 'official';
+      const pdf = new jsPDF({ orientation: portrait ? 'portrait' : 'landscape', unit:'mm', format:'a4', compress: true });
+      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, portrait ? 210 : 297, portrait ? 297 : 210, undefined, 'FAST');
+      pdf.save(fname + '.pdf');
+    }
+    toast('success', `فایل ${kind === 'pdf' ? 'PDF' : 'PNG'} با موفقیت ساخته شد.`);
+  }catch(err){
+    toast('danger', 'ساخت خروجی ناموفق بود. لطفاً دوباره تلاش کنید.');
+  }finally{
+    if (holder) holder.remove();
+    exporting = false;
+    setBusy(false);
+  }
+}
+
+/* ================================================================
+   TOASTS & MODAL
+   ================================================================ */
+function toast(type, msg, action){
+  const box = $('#toasts');
+  while (box.children.length >= 3) box.firstElementChild.remove();
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  const icoName = { success:'check', info:'info', warn:'alert', danger:'alert' }[type] || 'info';
+  el.innerHTML = `<span class="t-ico">${icon(icoName, 15)}</span><span class="t-msg">${esc(msg)}</span>` +
+    (action ? `<button type="button" class="t-act">${esc(action.label)}</button>` : '') +
+    `<button type="button" class="t-x" aria-label="بستن">${icon('x', 13)}</button>`;
+  const kill = () => { el.classList.add('out'); setTimeout(() => el.remove(), 240); };
+  const timer = setTimeout(kill, action ? 7000 : 4500);
+  el.querySelector('.t-x').addEventListener('click', () => { clearTimeout(timer); kill(); });
+  if (action) el.querySelector('.t-act').addEventListener('click', () => { clearTimeout(timer); kill(); action.fn(); });
+  box.appendChild(el);
+}
+let modalReturnFocus = null;
+function openModal(){
+  modalReturnFocus = document.activeElement;
+  $('#modal').hidden = false;
+  $('#mCancel').focus();
+}
+function closeModal(){
+  $('#modal').hidden = true;
+  if (modalReturnFocus && modalReturnFocus.focus) modalReturnFocus.focus();
+}
+function doNew(){
+  const snap = clone(state);
+  const tab = state.tab;
+  state = freshState(state);
+  state.tab = tab;
+  closeModal();
+  syncEditor();
+  saveSoon();
+  toast('warn', 'فاکتور جدید ایجاد شد؛ اطلاعات قبلی پاک شد.', { label:'بازگردانی', fn: () => restoreSnapshot(snap) });
+}
+function doSample(){
+  const snap = clone(state);
+  const keep = { docKind: state.docKind, type: state.type, currency: state.currency, tab: state.tab };
+  state = seedState(state);
+  Object.assign(state, keep);
+  syncEditor();
+  saveSoon();
+  toast('success', 'فاکتور نمونه بارگذاری شد.', { label:'بازگردانی', fn: () => restoreSnapshot(snap) });
+}
+
+/* ================================================================
+   TABS / ZOOM / EVENTS / INIT
+   ================================================================ */
+const mqDesktop = window.matchMedia('(min-width: 1024px)');
+function setTab(t){
+  state.tab = t;
+  $('#tab-edit').setAttribute('aria-selected', t === 'edit');
+  $('#tab-prev').setAttribute('aria-selected', t === 'prev');
+  if (!mqDesktop.matches){
+    $('#paneEdit').hidden = t !== 'edit';
+    $('#panePrev').hidden = t !== 'prev';
+    if (t === 'prev') requestAnimationFrame(() => { fitSheet(sheetEl); applyScale(); });
+    window.scrollTo({ top: 0 });
+  }
+}
+function layoutMode(){
+  if (mqDesktop.matches){
+    $('#paneEdit').hidden = false;
+    $('#panePrev').hidden = false;
+    requestAnimationFrame(applyScale);
+  } else setTab(state.tab);
+}
+function setZoom(delta){
+  const base = state.zoom == null ? lastFit : state.zoom;
+  state.zoom = clamp(Math.round((base + delta) * 100) / 100, 0.3, 2.5);
+  applyScale();
+}
+function bindEvents(){
+  const pane = $('#paneEdit');
+  pane.addEventListener('input', handleInput);
+  pane.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter'){ e.preventDefault(); addItem(); }
+  });
+
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const a = btn.dataset.action;
+    switch (a){
+      case 'sample': doSample(); break;
+      case 'new': openModal(); break;
+      case 'export-pdf': doExport('pdf'); break;
+      case 'export-png': doExport('png'); break;
+      case 'add-item': addItem(); break;
+      case 'del-item': delItem(btn.dataset.id); break;
+      case 'move-up': moveItem(btn.dataset.id, -1); break;
+      case 'move-down': moveItem(btn.dataset.id, 1); break;
+      case 'regen': {
+        state.meta.number = String((parseInt(toEn(state.meta.number), 10) || 1000) + 1);
+        const inp = $('#f-number');
+        inp.value = state.meta.number;
+        inp.classList.remove('flash-inp'); void inp.offsetWidth; inp.classList.add('flash-inp');
+        scheduleUpdate();
+        break;
+      }
+      case 'dockind':
+        state.docKind = btn.dataset.val;
+        $$('.kind-btn[data-action="dockind"]').forEach(b => {
+          const on = b.dataset.val === state.docKind;
+          b.classList.toggle('on', on);
+          b.setAttribute('aria-pressed', on);
+        });
+        scheduleUpdate();
+        break;
+      case 'currency':
+        state.currency = btn.dataset.val;
+        $$('.seg-btn[data-action="currency"]').forEach(b => {
+          const on = b.dataset.val === state.currency;
+          b.classList.toggle('on', on);
+          b.setAttribute('aria-pressed', on);
+        });
+        updateCurLabels();
+        scheduleUpdate();
+        break;
+      case 'zoom-in': setZoom(0.2); break;
+      case 'zoom-out': setZoom(-0.2); break;
+      case 'zoom-fit': state.zoom = null; applyScale(); break;
+      case 'tab': setTab(btn.dataset.tab); break;
+      case 'chip': {
+        const target = $(btn.dataset.target);
+        if (target){
+          $$('.chip').forEach(c => c.classList.toggle('on', c === btn));
+          target.scrollIntoView({ behavior:'smooth', block:'start' });
+        }
+        break;
+      }
+      case 'modal-cancel': closeModal(); break;
+      case 'modal-ok': doNew(); break;
+    }
+  });
+
+  $('#modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !$('#modal').hidden) closeModal();
+  });
+
+  sheetEl.addEventListener('dblclick', () => {
+    state.zoom = state.zoom == null ? clamp(lastFit * 1.8, 0.5, 2.5) : null;
+    applyScale();
+  });
+
+  if ('ResizeObserver' in window) new ResizeObserver(() => applyScale()).observe(scroller);
+  window.addEventListener('resize', applyScale);
+  mqDesktop.addEventListener ? mqDesktop.addEventListener('change', layoutMode) : mqDesktop.addListener(layoutMode);
+
+  if ('IntersectionObserver' in window){
+    const chips = $$('.chip');
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (en.isIntersecting){
+          const id = '#' + en.target.id;
+          chips.forEach(c => c.classList.toggle('on', c.dataset.target === id));
+        }
+      });
+    }, { rootMargin: '-35% 0px -55% 0px' });
+    $$('.card[id]').forEach(c => io.observe(c));
+  }
+
+  if (window.visualViewport){
+    const bar = $('#bottombar');
+    const onVV = () => {
+      const kb = window.innerHeight - window.visualViewport.height > 150;
+      bar.classList.toggle('kb-hide', kb);
+    };
+    window.visualViewport.addEventListener('resize', onVV);
+  }
+}
+function initIcons(){
+  $$('[data-ico]').forEach(el => {
+    el.innerHTML = icon(el.dataset.ico, parseInt(el.dataset.s || '17', 10));
+    el.style.display = 'inline-flex';
+  });
+}
+function init(){
+  initIcons();
+  syncEditor();
+  bindEvents();
+  layoutMode();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => renderSheet());
+  window.addEventListener('load', () => { fitSheet(sheetEl); applyScale(); });
+}
+init();
+</script>
+</body>
+</html>
