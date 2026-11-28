@@ -1,61 +1,84 @@
-# 🧾 LIMI Factor
+# 🧾 LIMI Factor | فاکتور ساز لیمی
 
-### Persian Invoice Generator
-
-A simple, modern and free online invoice generator with Persian (Jalali) date support.
+<p align="center">
+  <strong>A Simple & Professional Persian Invoice Generator</strong>
+  <br/>
+  ابزار آنلاین ساخت و صدور فاکتور فروش و پیش‌فاکتور
+</p>
 
 <p align="center">
   <a href="https://liminia.github.io/factor/">
-    <img src="https://img.shields.io/badge/🚀_Live_Demo-Open_Project-2563EB?style=for-the-badge" alt="Live Demo">
+    <img src="https://img.shields.io/badge/🚀_Live_Demo-Open_Now-2563EB?style=for-the-badge" alt="Live Demo"/>
   </a>
-  <img src="https://img.shields.io/badge/Language-Persian-16A34A?style=for-the-badge" alt="Language">
-  <img src="https://img.shields.io/badge/Platform-Web-64748B?style=for-the-badge" alt="Platform">
+  <img src="https://img.shields.io/badge/Language-Persian-16A34A?style=for-the-badge" alt="Language"/>
+  <img src="https://img.shields.io/badge/Platform-Web-64748B?style=for-the-badge" alt="Platform"/>
 </p>
 
 ---
 
-## 📌 About
+## 🌐 About | درباره پروژه
 
-**LIMI Factor** is a lightweight web-based tool for creating, editing, and exporting professional invoices and proforma invoices.
+**English**
 
-Designed with Persian-speaking users in mind, it provides a straightforward interface, automatic calculations, Jalali calendar support, and multiple export formats — all without requiring an account or installation.
+LIMI Factor is a free, lightweight, browser-based invoice generator designed for Persian-speaking users. It allows you to create professional sales invoices and proforma invoices with automatic calculations, Jalali calendar support, and multiple export formats.
 
-## ✨ Features
+No registration, installation, or user account is required.
 
-- 🧾 Create sales invoices and proforma invoices
-- 📅 Persian (Jalali) calendar support
-- 📄 A4 portrait and landscape invoice layouts
-- 👤 Complete seller and customer information
-- ➕ Add and manage invoice items
-- 🧮 Automatic subtotal, discount, and tax calculations
-- 💰 Support for Rial and Toman currencies
-- 🖊️ Notes, stamp, and signature sections
-- 👀 Live invoice preview
-- 📥 Export invoices as PDF, PNG, and Excel
-- 💾 Local browser storage
-- ↩️ Undo recently cleared invoice data
+**فارسی**
 
-## 🚀 Live Demo
+فاکتور ساز LIMI یک ابزار آنلاین، رایگان و سبک برای ساخت و صدور فاکتور فروش و پیش‌فاکتور است. این ابزار با پشتیبانی از تاریخ شمسی، محاسبات خودکار و قالب‌های متنوع، امکان ساخت فاکتورهای حرفه‌ای را بدون نیاز به ثبت‌نام یا نصب نرم‌افزار فراهم می‌کند.
 
-Try LIMI Factor directly in your browser:
+## ✨ Features | امکانات
 
-**[https://liminia.github.io/factor/](https://liminia.github.io/factor/)**
+| Feature | قابلیت |
+|---|---|
+| 🧾 Sales & Proforma Invoices | صدور فاکتور فروش و پیش‌فاکتور |
+| 📅 Jalali Calendar | پشتیبانی از تقویم شمسی |
+| 📄 A4 Portrait & Landscape | قالب عمودی و افقی A4 |
+| 👤 Seller & Buyer Details | اطلاعات کامل فروشنده و خریدار |
+| ➕ Dynamic Invoice Items | افزودن و مدیریت اقلام فاکتور |
+| 🏷️ Item Codes & Discounts | کد کالا و تخفیف سطری |
+| 🧮 Automatic Calculations | محاسبه خودکار جمع، تخفیف و مالیات |
+| 💰 Rial & Toman Support | پشتیبانی از ریال و تومان |
+| 🖊️ Stamp & Signature | محل مهر و امضا |
+| 👀 Live Preview | پیش‌نمایش زنده فاکتور |
+| 📥 Multiple Export Formats | خروجی PDF، PNG و Excel |
+| 💾 Local Data Storage | ذخیره اطلاعات در مرورگر |
+| ↩️ Undo Function | امکان بازگردانی اطلاعات پاک‌شده |
 
-No registration or installation required.
+## 🚀 Live Demo | نسخه آنلاین
 
-## 🔐 Privacy
+Try it now — no installation required!
 
-LIMI Factor does not require user registration. Invoice data is stored locally in the user's browser, keeping the workflow simple and private.
+همین حالا بدون نیاز به نصب یا ثبت‌نام از ابزار استفاده کنید.
 
-## 🖥️ Deployment
+<p align="center">
+  <a href="https://liminia.github.io/factor/">
+    <img src="https://img.shields.io/badge/OPEN_LIMI_FACTOR-2563EB?style=for-the-badge" alt="Open LIMI Factor"/>
+  </a>
+</p>
 
-The project is hosted using **GitHub Pages**.
+🔗 https://liminia.github.io/factor/
 
-## 👨‍💻 Author
+## 🔐 Privacy | حریم خصوصی
+
+**English**
+
+Invoice data is stored locally in the user's browser. LIMI Factor does not require an account or registration to use its features.
+
+**فارسی**
+
+اطلاعات فاکتورها در مرورگر و روی دستگاه کاربر ذخیره می‌شوند. برای استفاده از امکانات برنامه نیازی به ایجاد حساب کاربری یا ثبت‌نام نیست.
+
+## 🛠️ Deployment | میزبانی
+
+Hosted on **GitHub Pages**.
+
+این پروژه از طریق سرویس GitHub Pages منتشر شده است.
+
+## 👨‍💻 Author | سازنده
 
 **Liminia**
-
----
 
 <p align="center">
   Made with ❤️ by <a href="https://github.com/liminia">Liminia</a>
